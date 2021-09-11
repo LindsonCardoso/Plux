@@ -33,16 +33,12 @@ export default function AuthProvider({children}){
     //Login usuario
     const singIn = async (login, senha) => {
         setLoadingAuth(true)   
-        Axios.post('http://localhost:3001/api/login',{
+        Axios.get('http://localhost:3001/api/buscarUser',{
         login: login,
         senha: senha,
         }).then((response) => {
         if(response.data.message){
             setDataUsers(response.data.message);
-            setLoadingAuth(false);
-            toast.error("Login/senha invalidos !", {
-                icon: "☹️"
-            });
         }else{
             setDataUsers(response.data)   
             
@@ -51,11 +47,11 @@ export default function AuthProvider({children}){
                 login: response.data.usu_login,
                 senha: response.data.usu_senha,
             }
-            console.log(dataUser);
+
             setUser(dataUser)
             storegeUser(dataUser)
             setLoadingAuth(false);  
-            toast.success("Bem Vindo de volta !", {
+            toast.success("Bem Vindo ao Plux !", {
                 icon: "🚀"
               });
         }
@@ -82,19 +78,14 @@ export default function AuthProvider({children}){
         }).then((response) => {
         console.log(response)
         })
-        Axios.get('http://localhost:3001/api/login',{
+        Axios.post('http://localhost:3001/api/buscarUser',{
         login: login,
         senha: senha,
-        }).then((response) => {   
+        }).then((response) => {
         if(response.data.message){
-        setDataUsers(response.data.message);
-        setLoadingAuth(false);
-        toast.error("Login/senha invalidos !", {
-            icon: "☹️"
-        });
+            setDataUsers(response.data.message);
         }else{
-            setDataUsers(response.data) 
-
+            setDataUsers(response.data)   
             let dataUser = {
                 uid: response.data.usu_id,
                 login: response.data.usu_login,
@@ -104,20 +95,23 @@ export default function AuthProvider({children}){
             setUser(dataUser)
             storegeUser(dataUser)
             setLoadingAuth(false); 
-            toast.success("Bem Vindo ao Plux!", {
+            toast.success("");
+            toast.success("Bem Vindo de volta !", {
                 icon: "👋"
               });
         }
         })
         .catch((error) => {
             console.log(error);
-              toast.error("Ops algo deu errado !", {
+            toast.error("Ops algo deu errado !", {
                 icon: "☹️"
             });
             setLoadingAuth(false);
         })
     }
         
+
+
 
 
     function storegeUser(dataUser){

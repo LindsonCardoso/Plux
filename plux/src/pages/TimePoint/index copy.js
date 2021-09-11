@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Axios from 'axios'
+
 import './times.css'
 
 
 const date = new Date();
+
 
 
 export default function Registrar(){
@@ -35,6 +37,7 @@ export default function Registrar(){
         return () => clearInterval(timer);
     }, [])
 
+
     
     const handleSubmit = async ()=>{
         alert('CLICOU')
@@ -42,8 +45,8 @@ export default function Registrar(){
 
         Axios.post("http://localhost:3001/api/register", {
     
-        horas:`${dateTime.hours}:${dateTime.minutes}:${dateTime.seconds}`
-            
+            horas:`${dateTime.hours}:${dateTime.minutes}:${dateTime.seconds}`
+
         }).then(() => {
             alert('SuccessFull insert')
         })
@@ -66,10 +69,12 @@ export default function Registrar(){
          <div className="container">
           
             <div className="title">
-              <h1>PluX</h1>
+             
             </div>
      
-            <div className="date-time">
+            <div className="col-sm-6 col-md-4 col-md-offset-4">
+             <div>
+             <h1>PluX</h1>
              <div>
                  <a className="voltar-tela-ponto"></a>
              </div>
@@ -78,6 +83,7 @@ export default function Registrar(){
              </div>
              <div>
               <span>{`${dateTime.hours}:${dateTime.minutes}:${dateTime.seconds}`}</span>
+             </div>
              </div>
             </div>
 

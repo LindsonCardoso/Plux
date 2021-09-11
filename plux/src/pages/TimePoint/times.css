@@ -26,6 +26,45 @@
     margin-top: 7rem;
 }
 
+
+
+.formSignin{
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.form-control{
+    position: relative;
+    font-size: 16px;
+    height: auto;
+    text-align: center;
+    padding: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;    
+}
+
+.volta-tela-ponto{
+    float: left;
+    margin-top: -40px;
+    padding: 10px;
+    color: var(--FUNDO);
+    font-size: 1rem;
+    border: none;
+    background: #fff;
+}
+
+.date-time{
+    float: right;
+    margin-top:-40px; 
+    padding:10px;
+    color: var(--FUNDO);
+    font-weight: bold; 
+    font-size: 20px; 
+    padding-right: 30px;
+}
+
 .CountdownContainer{
 
     display: flex;
@@ -34,8 +73,9 @@
     font-weight: 600;
     color: var(--title);
     justify-content: center;
-
+   
     margin-top: 7rem;
+   
 }   
 
 
@@ -47,7 +87,7 @@
     background: var(--white);
     box-shadow: 0 0 2px rgb(0, 0,0.01);
     border-radius: 5px;
-    font-size: 3rem;
+    font-size: 2rem;
     text-align: center;
 }
 
@@ -76,9 +116,8 @@ margin: 0 0.5rem;
 
     text-align: center;
     margin: auto;
-    width: 20%;
+    width: 22%;
     height: 3rem;
-    margin-top: 2rem;
     display: flex;
     border: 8;
     justify-content: center;
