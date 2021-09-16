@@ -9,8 +9,7 @@ export const AuthContext = createContext({
  
 export default function AuthProvider({children}){
 
-    const [dataUsers, setDataUsers] = useState();
-    const [ user, setUser] = useState(null)
+     const [ user, setUser] = useState(null)
     const [ loadingAuth, setLoadingAuth] = useState(false)
     const [ loading, setLoading] = useState(true)
 
@@ -32,32 +31,42 @@ export default function AuthProvider({children}){
 
     //Login usuario
     const singIn = async (login, senha) => {
+    
         setLoadingAuth(true)   
+            
         Axios.post('http://localhost:3001/api/login',{
         login: login,
         senha: senha,
-        }).then((response) => {
+        }).then( async (response, value) => {
         if(response.data.message){
-            setDataUsers(response.data.message);
             setLoadingAuth(false);
             toast.error("Login/senha invalidos !", {
                 icon: "☹️"
             });
         }else{
-            setDataUsers(response.data)   
+            let uid =  response.data[0].usu_id;
+
+            const dataUser = await response.data;
+                
+            console.log('dados do response: '+(dataUser))
             
-            let dataUser = {
-                uid: response.data.usu_id,
-                login: response.data.usu_login,
-                senha: response.data.usu_senha,
+            let data = {
+                uid: uid,
+                nome: dataUser[0].usu_nome,
+                avatarUrl: dataUser[0].usu_avatar,
+                email: dataUser[0].usu_email 
             }
-            console.log(dataUser);
-            setUser(dataUser)
-            storegeUser(dataUser)
+                
+            //console.log(data);
+           
+            console.log('dados do datauser: '+JSON.stringify(data));
+            setUser(data)
+            storegeUser(data)
             setLoadingAuth(false);  
             toast.success("Bem Vindo de volta !", {
                 icon: "🚀"
               });
+          
         }
         })
         .catch((error) => {
@@ -82,27 +91,33 @@ export default function AuthProvider({children}){
         }).then((response) => {
         console.log(response)
         })
-        Axios.get('http://localhost:3001/api/login',{
+        Axios.post('http://localhost:3001/api/login',{
         login: login,
         senha: senha,
-        }).then((response) => {   
+        }).then( async (response, value) => {   
         if(response.data.message){
-        setDataUsers(response.data.message);
         setLoadingAuth(false);
         toast.error("Login/senha invalidos !", {
             icon: "☹️"
         });
         }else{
-            setDataUsers(response.data) 
+            let uid =  response.data[0].usu_id;
 
-            let dataUser = {
-                uid: response.data.usu_id,
-                login: response.data.usu_login,
-                senha: response.data.usu_senha,
-            }
+            let dataUser = await response.data;
+                
+            //console.log('dados do response: '+(dataUser))
+            
 
-            setUser(dataUser)
-            storegeUser(dataUser)
+            let data = {
+                uid: uid,
+                nome: dataUser[0].usu_nome, 
+                login: dataUser[0].usu_login,
+                email:  dataUser[0].usu_email,
+                avatarUrl: null
+            };
+
+            setUser(data)
+            storegeUser(data)
             setLoadingAuth(false); 
             toast.success("Bem Vindo ao Plux!", {
                 icon: "👋"
@@ -120,8 +135,8 @@ export default function AuthProvider({children}){
         
 
 
-    function storegeUser(dataUser){
-        localStorage.setItem('SistemaUser', JSON.stringify(dataUser))
+    function storegeUser(data){
+        localStorage.setItem('SistemaUser', JSON.stringify(data))
     }
 
 
