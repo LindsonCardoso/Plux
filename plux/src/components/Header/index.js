@@ -22,7 +22,7 @@ import avatar from '../../assets/avatar.png'
 //styled
 const Nav = styled.div`
   background: var(--white);
-  height: 70px;
+  height: 50px;
   display: flex;
   justify-content: flex-start;
   align-items: center;

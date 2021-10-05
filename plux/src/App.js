@@ -18,7 +18,7 @@ const theme = extendTheme({ colors })
 
 function App({ Component }) {
   return (
-    <ChakraProvider bg="#153e75">
+    <ChakraProvider>
     <AuthProvider>
      <BrowserRouter>
       <ToastContainer autoClose={3000}/>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Axios from 'axios'
-import './times.css'
 
 
 const date = new Date();

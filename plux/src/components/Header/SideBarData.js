@@ -35,7 +35,7 @@ const items = [
         Icon: NotificationsIcon,
         path: "#",
         items: [
-          { name: "Cadastro de Funcionário", label: "Cadastro de funcionário", onClick },
+          { name: "Cadastro de Funcionário", label: "Cadastro de funcionário", path: "/cadastro-de-funcionario"},
           { name: "sms", label: "SMS" }
         ]
       },
