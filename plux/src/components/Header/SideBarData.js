@@ -18,8 +18,53 @@ const items = [
     Icon: ReceiptIcon,
     path: "#",
     items: [
-      { name: "statements",  path: "#", label: "Statements", onClick },
+      { name: "Controle de ponto",  path: "#", label: "Statements", onClick },
       { name: "reports", path: "#", label: "Reports", onClick }
+    ]
+  },
+  {
+    name: "Empresa",
+    label: "Empresa",
+    Icon: ReceiptIcon,
+    path: "#",
+    items: [
+      "divider",
+      {
+        name: "Funcionario",
+        label: "Funcionario",
+        Icon: NotificationsIcon,
+        path: "#",
+        items: [
+          { name: "Cadastro de Funcionário", label: "Cadastro de funcionário", onClick },
+          { name: "sms", label: "SMS" }
+        ]
+      },
+      "divider",
+      {
+        name: "Parametrizações",
+        label: "Parametrizações",
+        Icon: NotificationsIcon,
+        path: "#",
+        items: [
+          { name: "Departamentos", label: "Departamentos", onClick },
+          { name: "Cargos", label: "Cargos" },
+          { name: "Turnos", label: "Turnos" },
+          { name: "Motivos de ajustes", label: "Motivos de ajustes" },
+          { name: "Regra de ponto", label: "Regra de ponto", onClick },
+         
+        ]
+      },
+    ]
+  },
+  {
+    name: "Relatórios",
+    label: "Relatórios",
+    Icon: ReceiptIcon,
+    path: "#",
+    items: [
+      { name: "Horas/funcionários",  path: "#", label: "Horas/funcionário", onClick },
+      { name: "Ajustes", path: "#", label: "Ajustes", onClick },
+      { name: "Registro fora da empresa", path: "#", label: "Registro fora da empresa", onClick }
     ]
   },
   "divider",
@@ -29,8 +74,7 @@ const items = [
     Icon: SettingsIcon,
     path: "#",
     items: [
-      { name: "profile", label: "Profile", path:"/profile" },
-      { name: "insurance", label: "Insurance",  path: "#", onClick },
+      { name: "Administrativo", label: "Adminstrativo", path:"/profile" },
       "divider",
       {
         name: "notifications",

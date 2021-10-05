@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react'
 import Axios from 'axios'
 import { AuthContext } from '../../contexts/auth'
 import { Link } from 'react-router-dom'
+import { Input } from "@chakra-ui/react"
+import { toast } from 'react-toastify';
 
 
 import './signin.css'
@@ -18,10 +20,12 @@ export default function SingnIn(){
     const { singIn, loadingAuth } = useContext(AuthContext)
   //API CADASTRO
     const Login = (e) => {
+
       e.preventDefault();
       if(login !== '' && senha !== '') {
         singIn(login, senha);
       }
+    
     }
 
 

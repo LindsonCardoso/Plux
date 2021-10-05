@@ -51,15 +51,6 @@ export default function Registrar(){
     }
 
 
-      
-
-    function BaterPonto(){
-
-
-
-    }
-
-
     return(
 
         <section className="section-time" id="about">

@@ -1,17 +1,18 @@
 
-import { useState, useEffect, createContext } from 'react'
+import React,{Component, useState, useEffect, createContext } from 'react'
 import Axios from 'axios'
 import { toast } from 'react-toastify';
-export const AuthContext = createContext({
 
-
-}); 
+export const AuthContext = createContext({}); 
  
 export default function AuthProvider({children}){
 
-     const [ user, setUser] = useState(null)
+    const [ user, setUser] = useState(null)
     const [ loadingAuth, setLoadingAuth] = useState(false)
     const [ loading, setLoading] = useState(true)
+
+
+
 
     useEffect(()=>{
         function loadStorage(){
@@ -28,9 +29,8 @@ export default function AuthProvider({children}){
     }, [])
 
 
-
     //Login usuario
-    const singIn = async (login, senha) => {
+    async function singIn(login, senha,nomeEmpresa, email){
     
         setLoadingAuth(true)   
             
@@ -45,95 +45,133 @@ export default function AuthProvider({children}){
             });
         }else{
             let uid =  response.data[0].usu_id;
-
             const dataUser = await response.data;
-                
             console.log('dados do response: '+(dataUser))
             
-            let data = {
-                uid: uid,
-                nome: dataUser[0].usu_nome,
-                avatarUrl: dataUser[0].usu_avatar,
-                email: dataUser[0].usu_email 
-            }
-                
-            //console.log(data);
-           
-            console.log('dados do datauser: '+JSON.stringify(data));
-            setUser(data)
-            storegeUser(data)
-            setLoadingAuth(false);  
-            toast.success("Bem Vindo de volta !", {
-                icon: "🚀"
-              });
-          
+            Axios.post('http://localhost:3001/api/DadosEmpresa',{ 
+                email: dataUser[0].usu_email,   
+                }).then( async (res) => {
+                    setLoadingAuth(false);
+                    console.log('dados da empresa '+res.data)      
+                    const dataEmpresa = await res.data;  
+                    console.log('dados do empresa: '+JSON.stringify(dataEmpresa));
+
+                    let data = {
+                        uid: uid,
+                        nome: dataUser[0].usu_nome,
+                        avatarUrl: dataUser[0].usu_avatar,
+                        email: dataUser[0].usu_email,
+                        nomeEmpresa: dataEmpresa[0].cli_nome,
+                        razaoSocial: dataEmpresa[0].cli_razaosocial,
+                        CNPJ: dataEmpresa[0].cli_cnpj,
+                        IE: dataEmpresa[0].cli_ie
+               
+                    }          
+                    console.log('dados do datauser: '+JSON.stringify(data));
+                    setUser(data)
+                    storegeUser(data)
+                    setLoadingAuth(false);  
+                    toast.success("Bem Vindo de volta !", {
+                        icon: "🚀"
+                    });       
+                });
         }
-        })
-        .catch((error) => {
+    }).catch((error) => {
             console.log(error);
             toast.error("Ops algo deu errado !", {
                 icon: "☹️"
             });
             setLoadingAuth(false);
         })
-    }
-
- 
+}
 
 
-    const signUp = async (nome, login, email, senha) => {
+    async function signUp (nome, login, email, senha){
      setLoadingAuth(true)   
         Axios.post('http://localhost:3001/api/cadastro',{ 
         nome: nome,
         login: login,
         email: email,
         senha: senha,
-        }).then((response) => {
-        console.log(response)
-        })
-        Axios.post('http://localhost:3001/api/login',{
-        login: login,
-        senha: senha,
-        }).then( async (response, value) => {   
-        if(response.data.message){
-        setLoadingAuth(false);
-        toast.error("Login/senha invalidos !", {
-            icon: "☹️"
-        });
-        }else{
-            let uid =  response.data[0].usu_id;
+        }).then( async (response, value) => {
+            if(response.data.message){
+                setLoadingAuth(false);
+                console.log(response.data.message)
+                toast.error("Informe outro Login!", {
+                    icon: "☹️"
+                });
+            }else{  
+                  
+                setLoadingAuth(false);   
+                toast.success("Cadastro Realizado!", {
+                    icon: "🚀"
+                });
 
-            let dataUser = await response.data;
+                toast.info("Redirecionando... para tela inicial!", {
+                    icon: "🚀"
+                 });
                 
-            //console.log('dados do response: '+(dataUser))
-            
-
-            let data = {
-                uid: uid,
-                nome: dataUser[0].usu_nome, 
-                login: dataUser[0].usu_login,
-                email:  dataUser[0].usu_email,
-                avatarUrl: null
-            };
-
-            setUser(data)
-            storegeUser(data)
-            setLoadingAuth(false); 
-            toast.success("Bem Vindo ao Plux!", {
-                icon: "👋"
-              });
-        }
-        })
-        .catch((error) => {
-            console.log(error);
-              toast.error("Ops algo deu errado !", {
-                icon: "☹️"
-            });
-            setLoadingAuth(false);
-        })
+       
+            }
+            })
+            .catch((error) => {
+                console.log(error);
+                toast.error("Ops algo deu errado !", {
+                    icon: "☹️"
+                });
+                setLoadingAuth(false);
+            })
     }
         
-
+    async function cadEmpresa (nomeEmpresa,razaoSocial,cnpj,ie,email){
+        setLoadingAuth(true) 
+        Axios.post('http://localhost:3001/api/empresa',{ 
+            nomeEmpresa: nomeEmpresa, 
+            razaoSocial: razaoSocial,
+            CNPJ: cnpj,
+            IE: ie, 
+            email: email,
+        }).then( async (response, value) => {
+                if(response.data.message){     
+                    setLoadingAuth(false);
+                    console.log(response.data.message)
+                    toast.warn("Dados Ja Salvos!", {
+                        icon: "☹️"
+                    });
+                }else{ 
+                Axios.post('http://localhost:3001/api/DadosEmpresa',{ 
+                nomeEmpresa: nomeEmpresa,   
+                }).then( async (response, value) => {
+                    setLoadingAuth(false);
+                    console.log('aqui '+response.data)      
+                    const dataEmpresa = await response.data;  
+                    console.log('dados do datauser: '+JSON.stringify(dataEmpresa));
+      
+                    let data = {
+                        ...user,
+                        nomeEmpresa: dataEmpresa[0].cli_nome,
+                        razaoSocial: dataEmpresa[0].cli_razaosocial,
+                        CNPJ: dataEmpresa[0].cli_cnpj,
+                        IE: dataEmpresa[0].cli_ie
+                    }
+                    console.log('dados do dataEmpresa: '+JSON.stringify(data));
+                    setUser(data)
+                    storegeUser(data)
+                    setLoadingAuth(false); 
+                    toast.success("Dados Salvos!", {
+                        icon: "🚀"
+                    });
+                })
+                }//else
+                })
+                .catch((error) => {
+                  console.log(error);
+                  toast.error("Ops algo deu errado !", {
+                      icon: "☹️"
+                  });
+                  setLoadingAuth(false);
+              })
+       }
 
     function storegeUser(data){
         localStorage.setItem('SistemaUser', JSON.stringify(data))
@@ -158,7 +196,10 @@ export default function AuthProvider({children}){
          signUp,
          signOut,
          singIn,
-         loadingAuth
+         loadingAuth,
+         setUser,
+         storegeUser,
+         cadEmpresa
          }}
          > 
          {children}

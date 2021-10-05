@@ -1,8 +1,9 @@
 
 import { useState,useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useHistory } from 'react-router-dom';
 import Axios from 'axios'
 import { AuthContext } from '../../contexts/auth'
+
 
 import Logo from '../../assets/logo.jpg'
 
@@ -13,15 +14,23 @@ function SignUp() {
   const [senha, setSenha] = useState('');
 
   const {signUp, loadingAuth} = useContext(AuthContext);
-
+  let history = useHistory();
   //API CADASTRO
   const Cadastro = (e) => {
     e.preventDefault();
     if(nome !== '' && login !== '' && email !== '' && senha !== '') {
       signUp(nome, login, email, senha)
-    }
+    }  
+
+
+    setTimeout(() => {history.push("/")},3100);
+  
+
   }
 
+
+
+  
   return (
     <div className="container-center">
       <div className="login">
