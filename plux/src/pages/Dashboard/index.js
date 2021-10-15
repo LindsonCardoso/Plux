@@ -4,7 +4,6 @@ import { AuthContext } from "../../contexts/auth"
 
 import { Header } from '../../components/Header'
 
-
 export const Dashboard = () => {
 
     const { signOut } = useContext(AuthContext)
@@ -15,7 +14,7 @@ export const Dashboard = () => {
             <Header />
 
             <h1>Dashboard</h1>
-            
+
             <button type="button" onClick={() => signOut()}>Fazer Logout</button>
         </div>
     )

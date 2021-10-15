@@ -1,7 +1,8 @@
 import React from "react";
 import HomeIcon from "@material-ui/icons/Home";
 import ReceiptIcon from "@material-ui/icons/Receipt";
-import NotificationsIcon from "@material-ui/icons/Notifications";
+import BusinessIcon from '@material-ui/icons/Business';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import DesktopWindowsIcon from "@material-ui/icons/DesktopWindows";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Sidebar from "./Sidebar";
@@ -25,14 +26,14 @@ const items = [
   {
     name: "Empresa",
     label: "Empresa",
-    Icon: ReceiptIcon,
+    Icon: BusinessIcon,
     path: "#",
     items: [
       "divider",
       {
         name: "Funcionario",
         label: "Funcionario",
-        Icon: NotificationsIcon,
+        Icon: GroupAddIcon,
         path: "#",
         items: [
           { name: "Cadastro de Funcionário", label: "Cadastro de funcionário", path: "/cadastro-de-funcionario"},
@@ -43,7 +44,7 @@ const items = [
       {
         name: "Parametrizações",
         label: "Parametrizações",
-        Icon: NotificationsIcon,
+        Icon: "",
         path: "#",
         items: [
           { name: "Departamentos", label: "Departamentos", onClick },
@@ -79,7 +80,7 @@ const items = [
       {
         name: "notifications",
         label: "Notifications",
-        Icon: NotificationsIcon,
+        Icon: "",
         path: "#",
         items: [
           { name: "email", label: "Email", onClick },

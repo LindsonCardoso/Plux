@@ -1,39 +1,141 @@
 
-import { useState, useContext } from 'react'
+import { useState, useContext, useRef} from 'react'
 import { Header } from '../../components/Header';
 import Title from '../../components/Title';
 import Axios from 'axios';
+import { Form } from "@unform/web";
 import { toast } from 'react-toastify';
+import { DrawerR } from '../../components/drawer'
+import * as Yup from 'yup';
 import { FiSettings, FiPlusCircle } from 'react-icons/fi';
+import { MdVisibility , MdSearch }  from "react-icons/md";
 import { AuthContext } from '../../contexts/auth'
 import {
-    FormControl,
-    FormLabel,
-    Text,
-    Divider,
-    Input,
-    Flex,
-    Center,
-    Heading,
-    Box,
-    SimpleGrid,
-    Button,
-    Stack
+    Text,FormLabel,
+    Input,Icon,
+    Center,Box,
+    Button,Stack,
+    Table,Thead,
+    Tbody,Tr,
+    Th,Td,
+    Drawer,
+    DrawerBody,
+    DrawerHeader,
+    DrawerOverlay,
+    DrawerContent,
+    FormControl,Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton, Checkbox,DrawerFooter,
+    useDisclosure, Divider,DrawerCloseButton
 } from "@chakra-ui/react"
-
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
+import { useToast,Spinner } from "@chakra-ui/react"
 
 
 
 export default function Profile() {
 
-    const { signOut, loadingAuth } = useContext(AuthContext);
+    const { signOut, loadingAuth, } = useContext(AuthContext);
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const [funcionarios, setFuncionarios] = useState([1]);
+    const [jornada, setJornada] = useState([])
+
+    const [codigo, setCodigo] = useState('')
+    const [nome, setNome] = useState('')
+    const [email, setEmail] = useState('')
+    const [whatsapp, setWhatsapp] = useState('')
+    const [cpf, setCpf] = useState('')
+    const [status, setStatus] = useState({
+        type: '',
+        mensagem: ''
+      });
+    const toast = useToast()
+    
+
+    //modal
+    const [show, setShow] = useState("");
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    //drawer
+    const [size, setSize] = useState("")
+    const handleClick = () => {
+      setSize("md")
+      onOpen()
+    }
+    const formRef = useRef(null)
 
 
+    const handleSubmit = async (e)=>{      
+      e.preventDefault()
+      if(!validate()) return;
+
+      try{
+        const res = await fetch('http://localhost:3001/api/cadFuncionario', { 
+            body: JSON.stringify({
+            codigo: codigo, 
+            nome: nome,
+            email: email,
+            cpf: cpf,
+            celular: whatsapp,
+            }),  
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            
+        })
+        
+        if (!res.ok){
+          console.log(err);
+          setStatus({
+            type: 'error',
+            mensagem: "Erro: Dados nao cadastrado!"
+          });
+          const err = await res.json();
+          throw new Error(err.message);            
+        }else {
+    
+          toast({
+            title: "Dados cadastrados.",
+            status: "success",
+            duration: 3600,
+            isClosable: true,
+          })
+        }
+        }catch(err){
+          console.log(err);
+        }finally {
+            setNome('');
+            setEmail('');
+            setCpf('');
+            setCodigo('');
+            setWhatsapp('');
+            setStatus({
+                type: '',
+                mensagem: ""
+              });
+        }
+       }    
+
+       function validate(){
+        if(codigo.length < 4) return setStatus({type: 'error', mensagem: 'Erro: O codigo precisa ter pelo menos 4 caracteres!'});
+        if(!nome) return setStatus({type: 'error', mensagem: 'Erro: Necessário preencher o campo Nome completo!'});
+        if(cpf.length < 11) return setStatus({type: 'error', mensagem: 'Erro: O codigo precisa ter pelo menos 11 caracteres!'});
+        if(!email) return setStatus({type: 'error', mensagem: 'Erro: Necessário preencher o campo E-mail!'});
+        if(!whatsapp) return setStatus({type: 'error', mensagem: 'Erro: Necessário preencher o campo WhatsApp!'});
+        
+      
+        return true;
+      }
 
     return (
-  
+        <>
             <Box w="100%" h="100%" bg="#f8f8f8">
                 <Header />
                
@@ -50,6 +152,7 @@ export default function Profile() {
                     </Box>
          
                 {funcionarios.length === 0 ? (
+                    <>
                     <Box w="100%" p={6}  >
                             <Box w="100%" h="100%" >
                                 <Center p={2} mb={4}>
@@ -57,22 +160,222 @@ export default function Profile() {
                                 </Center>
                             
                                 <Center>
-                                    <Button leftIcon={<FiPlusCircle />} colorScheme="teal" variant="solid">
+                                    <Button leftIcon={<FiPlusCircle />} colorScheme="teal" variant="solid" onClick={onOpen}>
                                         Adicionar colaborador
                                     </Button>
                                 </Center>
                             </Box>
                     </Box>
+                    </>
                 ) : (
 
                     <>
-                    <Box w="100%" p={6}  >
-                        <Box w="100%" h="100%" >
-                            <Stack float="right" >
-                                <Button  leftIcon={<FiPlusCircle />} colorScheme="teal" variant="solid">
-                                Adicionar colaborador
-                                </Button>
+                    <Box w="100%" p={6}>
+                        <Box w="100%" h="100%">
+                            <Stack float="right">
+                                    <Button leftIcon={<FiPlusCircle />} colorScheme="teal" variant="solid"
+                                     onClick={handleClick}>
+                                        Adicionar colaborador
+                                    </Button>
+
+                                    <Drawer onClose={onClose} isOpen={isOpen} size={size}>
+                                    <DrawerOverlay />
+                                    <DrawerContent>
+                                
+                                    <DrawerHeader style={{fontSize: "15px"}}>Preencha as informações do colaborador que deseja cadastrar. Ele receberá instruções para ativar sua conta</DrawerHeader>
+                                
+                                    <DrawerBody>
+                                    {status.type === 'success' ? <p style={{ color: "green",  }}>{status.mensagem}</p> : ""}
+                                    {status.type === 'error' ? <p style={{ color: "#ff0000" }}>{status.mensagem}</p> : ""}
+                                    <form                                          
+                                     ref={formRef} 
+                                     onSubmit={handleSubmit}
+                                     id="my-form"
+                                     style={{textAlign: "center", display: "contents"}}
+                                    >
+                                  
+                        
+                                    <Input 
+                                      mt={4}
+                                      placeholder="Codigo" 
+                                      value={codigo}
+                                      onChange={(e) => setCodigo(e.target.value)}
+                                      name="codigo"
+                                      style={{border: '1px solid green'}}
+                                    />
+
+                                    
+                                    <Input 
+                                      mt={4}
+                                      placeholder="Nome Completo" 
+                                      type="text" 
+                                      value={nome}
+                                      onChange={(e) => setNome(e.target.value)}
+                                      name="nome"
+                                      style={{border: '1px solid green'}}
+                                    />
+                                    
+                                   
+                                    <Input 
+                                      mt={4} 
+                                      placeholder="CPF"
+                                      type="text" 
+                                      value={cpf}
+                                      onChange={(e) => setCpf(e.target.value)}
+                                      nome="cpf"
+                                      style={{border: '1px solid green'}}
+                                    />
+
+                                
+                                    <Input
+                                      mt={4}
+                                      placeholder="email" 
+                                      type="email" 
+                                      value={email}
+                                      onChange={(e) => setEmail(e.target.value)}
+                                      name="email"
+                                      style={{border: '1px solid green'}}
+                                    />
+                                
+                                   
+                                    <Input 
+                                     mt={4}
+                                      placeholder="WhatsApp"
+                                      type="text" 
+                                      value={whatsapp}
+                                      onChange={(e) => setWhatsapp(e.target.value)}
+                                      name="celular"
+                                      style={{border: '1px solid green'}}
+                                    />
+                                   
+                                   
+                                    <Center mt={4}>
+                                     <Divider orientation="horizontal"/>
+                                    </Center>                        
+                                  
+                                    <Center mt={4}>
+                                     <Button colorScheme="blue" onClick={handleShow} >Adicionar nova jornada de trabalho</Button>
+                                    </Center>
+                                    {show  &&
+                                    <>
+                                    <Modal                                        
+                                    isOpen={isOpen}
+                                    onClose={handleClose}                                            
+                                    >
+                                    <ModalOverlay/>
+                                    <ModalContent>
+                                    <ModalHeader>Adicionar nova jornada de trabalho</ModalHeader>
+                                    <ModalCloseButton />
+
+                                    <ModalBody pb={6}>
+
+                                    <FormControl>
+                                    <FormLabel>Nome da jornada</FormLabel>
+                                    <Checkbox defaultIsChecked>Seg-Dom</Checkbox>
+                                    </FormControl>
+
+                                    <Center mt={4}>
+                                    <Divider orientation="horizontal"/>
+                                    </Center>  
+
+                                    <Tabs mt={4} size="md" variant="enclosed">
+                                    <TabList>
+                                    <Tab>Fixa</Tab>
+                                    <Tab>Two</Tab>
+                                    </TabList>
+                                    <TabPanels>
+                                    <TabPanel>
+
+
+                                    </TabPanel>
+                                    <TabPanel>
+                                    <p>two!</p>
+                                    </TabPanel>
+                                    </TabPanels>
+                                    </Tabs>
+
+
+
+                                    </ModalBody>
+
+                                    <ModalFooter>
+
+                                    <Button 
+                                    colorScheme="blue" 
+                                    mr={3} 
+                                    type="submit" 
+                                    onClick={() =>
+                                    toast({
+                                    title: "Informações salvas",
+                                    description: "Enviaremos email para o usuário.",
+                                    status: "success",
+                                    duration: 3000,
+                                    isClosable: true,
+                                    })
+                                    }
+                                    >
+                                    Save
+                                    </Button>
+                                    <Button onClick={handleClose}>Cancel</Button>
+                                    </ModalFooter>
+                                    </ModalContent>
+                                    </Modal>
+                                    </>
+                                    }                    
+                                    {jornada.length === 0 ? (
+                                    <p></p>
+                                    ) : (
+                                    <p>teste</p>
+                                    )}
+
+                                  
+                                    </form>
+                                    </DrawerBody>
+                                        <DrawerFooter>
+                                        <Button   
+                                        type="submit" 
+                                        colorScheme="blue"
+                                        form="my-form"
+                                        
+                                        >
+                                      Confirmar
+                                       </Button>
+                                 
+                                       <Button onClick={onClose}>Cancelar</Button>
+                                      </DrawerFooter>
+                                    </DrawerContent>                                    
+                                </Drawer>
                             </Stack>
+
+                            <Table size="sm">
+                                <Thead>
+                                    <Tr>
+                                        <Th>Nome</Th>                                    
+                                        <Th>E-mail ou Telefone</Th>
+                                        <Th>Tipo de usuario</Th>
+                                        <Th>Departamento</Th>
+                                        <Th>Turno</Th>
+                                        <Th>Data de cadastro</Th>                             
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    <Tr>
+                                        <Td data-label="">Lindson cardoso</Td>
+                                        <Td>lindsoncardoso.al@gmail.com</Td>
+                                        <Td>Turno</Td>
+                                        <Td>                                            
+                                        <Stack direction="row" spacing={4}>
+                                            <Button colorScheme="yellow" variant="outline">  
+                                                <Icon as={MdVisibility} />                                  
+                                            </Button>
+                                            <Button  colorScheme="blue" variant="outline">
+                                                <Icon as={MdSearch} />      
+                                            </Button>
+                                        </Stack>
+                                        </Td>
+                                    </Tr>                                                                 
+                                </Tbody>
+                            </Table>
                         </Box>
                     </Box>
                     </>
@@ -88,6 +391,6 @@ export default function Profile() {
                 </div>
 
             </Box>
-     
+            </>
     )
 }

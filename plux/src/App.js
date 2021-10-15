@@ -15,7 +15,6 @@ const colors = {
 }
 const theme = extendTheme({ colors })
 
-
 function App({ Component }) {
   return (
     <ChakraProvider>

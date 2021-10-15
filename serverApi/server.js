@@ -74,7 +74,6 @@ app.post('/api/login', (req, res) => {
 })
 
 
-
 //Cadastro dados do usuario
 app.post('/api/empresa', (req, res) => {
   
@@ -130,6 +129,48 @@ db.query("SELECT * FROM cad_empresa WHERE cli_email = ?",
 })
 
 
+app.post('/api/cadFuncionario', (req, res) => {
+
+  const codigo  = req.body.codigo
+  const nome  = req.body.nome
+  const email  = req.body.email
+  const celular = req.body.celular
+  const cpf  = req.body.cpf
+  
+
+
+  db.query(
+    "SELECT COUNT(*) verificar from cad_funcionarios where fun_email = ?", 
+    [email],
+    (err, result) => {
+      if(err) res.send({err: err});
+      if(result){
+       
+      console.log(result)
+      
+      const verif = JSON.stringify(result);
+      console.log("Verificar: " + verif);
+      const json = JSON.parse(verif);
+      console.log(json[0].verificar)
+      const Id = json[0].verificar; 
+      if(Id === 1){
+        res.send({message: "E-mail já cadastrado!"});
+      }else if(Id === 0){ 
+        db.query("INSERT INTO cad_funcionarios (fun_codigo, fun_nome, fun_email, fun_cpf, fun_whatsapp) VALUES (?,?,?,?,?)",
+        [codigo,nome,email,cpf,celular],  (err, results) => {
+          if(err) res.send({err: err});
+          if(result.length > 0){
+            res.send(results)
+            console.log(results)
+            }          
+        })
+      }
+     }else res.send({message: "ops ocorreu algum problema"})
+    }); 
+})
+  
+
+
 app.put('/api/EmpUpdate', (req, res) => {
   const id = req.body.id
   const nomeEmpresa  = req.body.nomeEmpresa
@@ -160,8 +201,6 @@ app.get('/api/buscarUser', (req, res) => {
     })
 
 })
-
-
 
 
 
