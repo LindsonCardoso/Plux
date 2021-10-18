@@ -1,8 +1,8 @@
 
-import { useState, useContext, useRef} from 'react'
+import { useState, useContext,useEffect, useRef} from 'react'
 import { Header } from '../../components/Header';
 import Title from '../../components/Title';
-import Axios from 'axios';
+import axios from 'axios';
 import { Form } from "@unform/web";
 import { toast } from 'react-toastify';
 import { DrawerR } from '../../components/drawer'
@@ -30,7 +30,7 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton, Checkbox,DrawerFooter,
-    useDisclosure, Divider,DrawerCloseButton
+    useDisclosure, Divider,DrawerCloseButton, Alert
 } from "@chakra-ui/react"
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
 import { useToast,Spinner } from "@chakra-ui/react"
@@ -42,14 +42,21 @@ export default function Profile() {
     const { signOut, loadingAuth, } = useContext(AuthContext);
     const { isOpen, onOpen, onClose } = useDisclosure()
 
-    const [funcionarios, setFuncionarios] = useState([1]);
+    //variaveis functions
+    const [funcionarios, setFuncionarios] = useState([]);
     const [jornada, setJornada] = useState([])
-
+    const [listFuncionario, setListaFuncionarios] = useState([1]);
+    const [loading, setLoading] = useState(true)
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [isEmpty, setIsEmpty] = useState(false)
+    const [lastCad,setLastCad] = useState()
+    //variaveis funcionais 
     const [codigo, setCodigo] = useState('')
     const [nome, setNome] = useState('')
     const [email, setEmail] = useState('')
     const [whatsapp, setWhatsapp] = useState('')
     const [cpf, setCpf] = useState('')
+
     const [status, setStatus] = useState({
         type: '',
         mensagem: ''
@@ -68,39 +75,38 @@ export default function Profile() {
       setSize("md")
       onOpen()
     }
+
     const formRef = useRef(null)
 
 
+    //Cadastro de funcionarios/colaboradores
     const handleSubmit = async (e)=>{      
       e.preventDefault()
       if(!validate()) return;
 
       try{
-        const res = await fetch('http://localhost:3001/api/cadFuncionario', { 
-            body: JSON.stringify({
-            codigo: codigo, 
-            nome: nome,
-            email: email,
-            cpf: cpf,
-            celular: whatsapp,
-            }),  
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            method: 'POST',
-            
-        })
         
-        if (!res.ok){
-          console.log(err);
-          setStatus({
-            type: 'error',
-            mensagem: "Erro: Dados nao cadastrado!"
-          });
-          const err = await res.json();
-          throw new Error(err.message);            
-        }else {
-    
+        await axios.post('http://localhost:3001/api/cadFuncionario',{ 
+      
+        codigo: codigo, 
+        nome: nome,
+        email: email,
+        cpf: cpf,
+        celular: whatsapp,
+     
+        }).then( async (response, value) => {
+          if(response.data.message){
+              console.log(response.data.message)
+              toast.error("Informe outro Login!", {
+                  icon: "☹️"
+              });
+              toast({
+                title: "Ocorrreu algum error.",
+                status: "error",
+                duration: 3600,
+                isClosable: true,
+              })
+          }else {
           toast({
             title: "Dados cadastrados.",
             status: "success",
@@ -108,8 +114,14 @@ export default function Profile() {
             isClosable: true,
           })
         }
-        }catch(err){
-          console.log(err);
+      });}catch(err){
+          console.log('alguim blx' + err);
+          toast({
+            title: "Ja existe um email cadastrado!.",
+            status: "error",
+            duration: 3600,
+            isClosable: true,
+          })
         }finally {
             setNome('');
             setEmail('');
@@ -121,9 +133,52 @@ export default function Profile() {
                 mensagem: ""
               });
         }
-       }    
+    }    
 
-       function validate(){
+
+    useEffect(() => {
+
+      loadFuncionario()
+
+      return() =>{
+
+      }
+    }, [])
+
+  //buscando dados
+   const loadFuncionario = async ()=>{
+    await axios.get('http://localhost:3001/api/buscarFuncionanio',{
+      params: {
+        _limit: 4
+       }
+    })
+    .then((response) =>{
+      
+      setListaFuncionarios(response.data);
+      updateState(listFuncionario)
+      console.log('lista do load' + JSON.stringify(response.data))
+      
+
+    }).catch((err) => {
+      console.log('Error', err)
+      setLoadingMore(false)
+    })
+    setLoading(false)
+  }
+
+  //verifincado se tem dados dos funcionarios cadastrados 
+  const updateState = async (listFuncionario) => {
+    const isDataEmpty = listFuncionario.size === 0;
+    console.log(isDataEmpty)
+
+    if(!isDataEmpty){
+      console.log('esta cheio')
+    }
+
+  }
+
+
+  function validate(){
         if(codigo.length < 4) return setStatus({type: 'error', mensagem: 'Erro: O codigo precisa ter pelo menos 4 caracteres!'});
         if(!nome) return setStatus({type: 'error', mensagem: 'Erro: Necessário preencher o campo Nome completo!'});
         if(cpf.length < 11) return setStatus({type: 'error', mensagem: 'Erro: O codigo precisa ter pelo menos 11 caracteres!'});
@@ -132,7 +187,39 @@ export default function Profile() {
         
       
         return true;
-      }
+    }
+
+
+  if(loading) {
+    return(
+      <>
+      <Box w="100%" h="100%" bg="#f8f8f8">
+      <Header />
+      
+          <Box 
+          shadow="md"
+          borderRadius="md" 
+          bg="#FFF"
+          margin="0 1rem 0rem 1rem"
+          
+          >
+          <Title name="Cadastro de colaboradores">
+            <FiSettings size={25} />
+          </Title>
+
+          <Center p={2} mb={4}>
+           <Text fontSize={18} fontWeight="bold">Buscando dados...</Text>
+           </Center>
+
+        </Box>
+
+      </Box>
+
+
+      </>
+    )
+  }
+
 
     return (
         <>
@@ -151,7 +238,7 @@ export default function Profile() {
                      </Title>
                     </Box>
          
-                {funcionarios.length === 0 ? (
+                {listFuncionario.length === 0 ? (
                     <>
                     <Box w="100%" p={6}  >
                             <Box w="100%" h="100%" >
@@ -160,7 +247,7 @@ export default function Profile() {
                                 </Center>
                             
                                 <Center>
-                                    <Button leftIcon={<FiPlusCircle />} colorScheme="teal" variant="solid" onClick={onOpen}>
+                                    <Button leftIcon={<FiPlusCircle />} colorScheme="teal" variant="solid" onClick={handleClick}>
                                         Adicionar colaborador
                                     </Button>
                                 </Center>
@@ -168,7 +255,6 @@ export default function Profile() {
                     </Box>
                     </>
                 ) : (
-
                     <>
                     <Box w="100%" p={6}>
                         <Box w="100%" h="100%">
@@ -335,8 +421,7 @@ export default function Profile() {
                                         <Button   
                                         type="submit" 
                                         colorScheme="blue"
-                                        form="my-form"
-                                        
+                                        form="my-form"   
                                         >
                                       Confirmar
                                        </Button>
@@ -359,21 +444,30 @@ export default function Profile() {
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    <Tr>
-                                        <Td data-label="">Lindson cardoso</Td>
-                                        <Td>lindsoncardoso.al@gmail.com</Td>
-                                        <Td>Turno</Td>
-                                        <Td>                                            
-                                        <Stack direction="row" spacing={4}>
-                                            <Button colorScheme="yellow" variant="outline">  
-                                                <Icon as={MdVisibility} />                                  
-                                            </Button>
-                                            <Button  colorScheme="blue" variant="outline">
-                                                <Icon as={MdSearch} />      
-                                            </Button>
-                                        </Stack>
-                                        </Td>
-                                    </Tr>                                                                 
+
+                                    {listFuncionario.map((item, index) =>{
+                                        return(
+                                          <Tr key={index}>
+                                          <Td data-label="">{item.fun_nome}</Td>
+                                          <Td>{item.fun_email}</Td>
+                                         
+                                          <Td>                                            
+                                          <Stack direction="row" spacing={4}>
+                                              <Button colorScheme="yellow" variant="outline">  
+                                                  <Icon as={MdVisibility} />                                  
+                                              </Button>
+                                              <Button  colorScheme="blue" variant="outline">
+                                                  <Icon as={MdSearch} />      
+                                              </Button>
+                                          </Stack>
+                                          </Td>
+                                      </Tr> 
+                                        )
+                                    })
+
+                                    }
+
+                                                                                                   
                                 </Tbody>
                             </Table>
                         </Box>

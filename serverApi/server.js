@@ -17,7 +17,7 @@ const db = mysql.createConnection({
 });
 
 
-//CADASTRO DE USUARIO
+//CADASTRO DE USUARIO (ADMIN)
 app.post('/api/cadastro', (req, res) => {
   
   const nome  = req.body.nome
@@ -56,7 +56,7 @@ app.post('/api/cadastro', (req, res) => {
    
 })
 
-//login
+//login (ADMIN)
 app.post('/api/login', (req, res) => {
 
   const senha = req.body.senha
@@ -74,7 +74,7 @@ app.post('/api/login', (req, res) => {
 })
 
 
-//Cadastro dados do usuario
+//Cadastro dados da emprasa
 app.post('/api/empresa', (req, res) => {
   
   const nomeEmpresa  = req.body.nomeEmpresa
@@ -116,15 +116,15 @@ app.post('/api/empresa', (req, res) => {
 // dados da empresa
 app.post('/api/DadosEmpresa', (req, res) => {
 
-const email  = req.body.email
+const nome  = req.body.nomeEmpresa
 
-db.query("SELECT * FROM cad_empresa WHERE cli_email = ?",
-[email], (err, result) => {
+db.query("SELECT * FROM cad_empresa WHERE cli_nome = ?",
+[nome], (err, result) => {
   if(err) res.send({err: err});
   if(result.length > 0){
     res.send(result)
     console.log(result)
-    }else res.send({message: "emperesass"})      
+    }else res.send({message: "ocorreu um erro ao tentar buscar dados da empresa"})      
 })
 })
 
@@ -137,8 +137,6 @@ app.post('/api/cadFuncionario', (req, res) => {
   const celular = req.body.celular
   const cpf  = req.body.cpf
   
-
-
   db.query(
     "SELECT COUNT(*) verificar from cad_funcionarios where fun_email = ?", 
     [email],
@@ -168,7 +166,20 @@ app.post('/api/cadFuncionario', (req, res) => {
      }else res.send({message: "ops ocorreu algum problema"})
     }); 
 })
-  
+
+app.get('/api/buscarFuncionanio', (req, res) => {
+  db.query( 
+    "SELECT * FROM cad_funcionarios",
+    (err, result) => {
+     if(err) res.send({err: err});
+     if(result){
+       res.send(result)
+       console.log(result)
+      }
+     else res.send({message: "Ops ocorreu um erro"})
+    })
+
+})  
 
 
 app.put('/api/EmpUpdate', (req, res) => {

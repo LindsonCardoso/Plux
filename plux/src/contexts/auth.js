@@ -61,10 +61,7 @@ export default function AuthProvider({children}){
                         nome: dataUser[0].usu_nome,
                         avatarUrl: dataUser[0].usu_avatar,
                         email: dataUser[0].usu_email,
-                        nomeEmpresa: dataEmpresa[0].cli_nome,
-                        razaoSocial: dataEmpresa[0].cli_razaosocial,
-                        CNPJ: dataEmpresa[0].cli_cnpj,
-                        IE: dataEmpresa[0].cli_ie
+                       
                
                     }          
                     console.log('dados do datauser: '+JSON.stringify(data));
