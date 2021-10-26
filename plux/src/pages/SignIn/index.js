@@ -42,7 +42,7 @@ export default function SingnIn(){
           </form>
           <Link to="/register">Criar conta</Link>
           <div className="register">
-            <Link to="/registrarponto">Registrar ponto agora</Link>
+            <Link to="/registrar-ponto">Registrar ponto agora</Link>
           </div>
          </div>
         </div>

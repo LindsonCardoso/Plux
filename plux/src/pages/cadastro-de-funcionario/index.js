@@ -43,19 +43,27 @@ export default function Profile() {
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     //variaveis functions
-    const [funcionarios, setFuncionarios] = useState([]);
     const [jornada, setJornada] = useState([])
-    const [listFuncionario, setListaFuncionarios] = useState([1]);
+    const [listFuncionario, setListaFuncionarios] = useState([]);
     const [loading, setLoading] = useState(true)
     const [loadingMore, setLoadingMore] = useState(false)
     const [isEmpty, setIsEmpty] = useState(false)
-    const [lastCad,setLastCad] = useState()
+    const [lastFuncionario,setLastFuncionario] = useState([])
     //variaveis funcionais 
     const [codigo, setCodigo] = useState('')
     const [nome, setNome] = useState('')
     const [email, setEmail] = useState('')
     const [whatsapp, setWhatsapp] = useState('')
     const [cpf, setCpf] = useState('')
+
+
+    useEffect(() => {
+      loadFuncionario()
+      return() =>{
+
+      }
+    }, [])
+
 
     const [status, setStatus] = useState({
         type: '',
@@ -113,6 +121,7 @@ export default function Profile() {
             duration: 3600,
             isClosable: true,
           })
+          handleMore();
         }
       });}catch(err){
           console.log('alguim blx' + err);
@@ -136,45 +145,54 @@ export default function Profile() {
     }    
 
 
-    useEffect(() => {
 
-      loadFuncionario()
-
-      return() =>{
-
-      }
-    }, [])
-
+    
   //buscando dados
-   const loadFuncionario = async ()=>{
+   const loadFuncionario = async () =>{
     await axios.get('http://localhost:3001/api/buscarFuncionanio',{
       params: {
-        _limit: 4
+        _limit:4
        }
     })
     .then((response) =>{
-      
-      setListaFuncionarios(response.data);
-      updateState(listFuncionario)
-      console.log('lista do load' + JSON.stringify(response.data))
-      
-
+      updateState(response.data)
+      console.log('RESPONSE: ' + JSON.stringify(response.data))
     }).catch((err) => {
       console.log('Error', err)
       setLoadingMore(false)
     })
-    setLoading(false)
+    setLoading(false);
   }
 
   //verifincado se tem dados dos funcionarios cadastrados 
-  const updateState = async (listFuncionario) => {
-    const isDataEmpty = listFuncionario.size === 0;
-    console.log(isDataEmpty)
+  const updateState = async (dados) => {
+    const isDataEmpty = dados.size === 0;
 
     if(!isDataEmpty){
-      console.log('esta cheio')
-    }
+      let lista = [];
 
+      dados.forEach(element => {
+        lista.push({
+          id: element.fun_id,
+          nome: element.fun_nome,
+          email: element.fun_email,
+        })
+      });
+      const lastFunc = dados[dados.length -1]
+      setListaFuncionarios(listFuncionario => [...listFuncionario, ...lista ])
+      setLastFuncionario(lastFunc)
+      console.log(JSON.stringify(lista))
+      console.log(JSON.stringify(listFuncionario))
+    }else{  
+      setIsEmpty(true)
+      toast({
+        title: "Não mais a dados a buscar.",
+        status: "info",
+        duration: 3600,
+        isClosable: true,
+      })
+    }
+    setLoadingMore(false);
   }
 
 
@@ -188,6 +206,28 @@ export default function Profile() {
       
         return true;
     }
+
+
+  async function handleMore(){
+    setLoadingMore(true);
+  
+    //var isDataListFunc = listFuncionario.indexOf(listFuncionario[listFuncionario.length -1])
+
+  
+    //var isDataLastFunc = lastFuncionario[lastFuncionario.length -1]
+
+   
+      await axios.post('http://localhost:3001/api/buscarUltimoIdFunc',{
+        ultimoId: lastFuncionario['fun_id'],
+      }).then((response) => {
+        console.log("ultimos arrays"+response.data)
+        updateState(response.data)
+      })
+      setIsEmpty(true)
+
+   
+  }
+
 
 
   if(loading) {
@@ -221,6 +261,8 @@ export default function Profile() {
   }
 
 
+
+
     return (
         <>
             <Box w="100%" h="100%" bg="#f8f8f8">
@@ -250,6 +292,173 @@ export default function Profile() {
                                     <Button leftIcon={<FiPlusCircle />} colorScheme="teal" variant="solid" onClick={handleClick}>
                                         Adicionar colaborador
                                     </Button>
+                                    
+                                    <Drawer onClose={onClose} isOpen={isOpen} size={size}>
+                                    <DrawerOverlay />
+                                    <DrawerContent>
+                                
+                                    <DrawerHeader style={{fontSize: "15px"}}>Preencha as informações do colaborador que deseja cadastrar. Ele receberá instruções para ativar sua conta</DrawerHeader>
+                                
+                                    <DrawerBody>
+                                    {status.type === 'success' ? <p style={{ color: "green",  }}>{status.mensagem}</p> : ""}
+                                    {status.type === 'error' ? <p style={{ color: "#ff0000" }}>{status.mensagem}</p> : ""}
+                                    <form                                          
+                                     ref={formRef} 
+                                     onSubmit={handleSubmit}
+                                     id="my-form"
+                                     style={{textAlign: "center", display: "contents"}}
+                                    >
+                                  
+                        
+                                    <Input 
+                                      mt={4}
+                                      placeholder="Codigo" 
+                                      value={codigo}
+                                      onChange={(e) => setCodigo(e.target.value)}
+                                      name="codigo"
+                                      style={{border: '1px solid green'}}
+                                    />
+
+                                    
+                                    <Input 
+                                      mt={4}
+                                      placeholder="Nome Completo" 
+                                      type="text" 
+                                      value={nome}
+                                      onChange={(e) => setNome(e.target.value)}
+                                      name="nome"
+                                      style={{border: '1px solid green'}}
+                                    />
+                                    
+                                   
+                                    <Input 
+                                      mt={4} 
+                                      placeholder="CPF"
+                                      type="text" 
+                                      value={cpf}
+                                      onChange={(e) => setCpf(e.target.value)}
+                                      nome="cpf"
+                                      style={{border: '1px solid green'}}
+                                    />
+
+                                
+                                    <Input
+                                      mt={4}
+                                      placeholder="email" 
+                                      type="email" 
+                                      value={email}
+                                      onChange={(e) => setEmail(e.target.value)}
+                                      name="email"
+                                      style={{border: '1px solid green'}}
+                                    />
+                                
+                                   
+                                    <Input 
+                                     mt={4}
+                                      placeholder="WhatsApp"
+                                      type="text" 
+                                      value={whatsapp}
+                                      onChange={(e) => setWhatsapp(e.target.value)}
+                                      name="celular"
+                                      style={{border: '1px solid green'}}
+                                    />
+                                   
+                                   
+                                    <Center mt={4}>
+                                     <Divider orientation="horizontal"/>
+                                    </Center>                        
+                                  
+                                    <Center mt={4}>
+                                     <Button colorScheme="blue" onClick={handleShow} >Adicionar nova jornada de trabalho</Button>
+                                    </Center>
+                                    {show  &&
+                                    <>
+                                    <Modal                                        
+                                    isOpen={isOpen}
+                                    onClose={handleClose}                                            
+                                    >
+                                    <ModalOverlay/>
+                                    <ModalContent>
+                                    <ModalHeader>Adicionar nova jornada de trabalho</ModalHeader>
+                                    <ModalCloseButton />
+
+                                    <ModalBody pb={6}>
+
+                                    <FormControl>
+                                    <FormLabel>Nome da jornada</FormLabel>
+                                    <Checkbox defaultIsChecked>Seg-Dom</Checkbox>
+                                    </FormControl>
+
+                                    <Center mt={4}>
+                                    <Divider orientation="horizontal"/>
+                                    </Center>  
+
+                                    <Tabs mt={4} size="md" variant="enclosed">
+                                    <TabList>
+                                    <Tab>Fixa</Tab>
+                                    <Tab>Two</Tab>
+                                    </TabList>
+                                    <TabPanels>
+                                    <TabPanel>
+
+
+                                    </TabPanel>
+                                    <TabPanel>
+                                    <p>two!</p>
+                                    </TabPanel>
+                                    </TabPanels>
+                                    </Tabs>
+
+
+
+                                    </ModalBody>
+
+                                    <ModalFooter>
+
+                                    <Button 
+                                    colorScheme="blue" 
+                                    mr={3} 
+                                    type="submit" 
+                                    onClick={() =>
+                                    toast({
+                                    title: "Informações salvas",
+                                    description: "Enviaremos email para o usuário.",
+                                    status: "success",
+                                    duration: 3000,
+                                    isClosable: true,
+                                    })
+                                    }
+                                    >
+                                    Save
+                                    </Button>
+                                    <Button onClick={handleClose}>Cancel</Button>
+                                    </ModalFooter>
+                                    </ModalContent>
+                                    </Modal>
+                                    </>
+                                    }                    
+                                    {jornada.length === 0 ? (
+                                    <p></p>
+                                    ) : (
+                                    <p>teste</p>
+                                    )}
+
+                                  
+                                    </form>
+                                    </DrawerBody>
+                                        <DrawerFooter>
+                                        <Button   
+                                        type="submit" 
+                                        colorScheme="blue"
+                                        form="my-form"   
+                                        >
+                                      Confirmar
+                                       </Button>
+                                 
+                                       <Button onClick={onClose}>Cancelar</Button>
+                                      </DrawerFooter>
+                                    </DrawerContent>                                    
+                                </Drawer>
                                 </Center>
                             </Box>
                     </Box>
@@ -448,9 +657,8 @@ export default function Profile() {
                                     {listFuncionario.map((item, index) =>{
                                         return(
                                           <Tr key={index}>
-                                          <Td data-label="">{item.fun_nome}</Td>
-                                          <Td>{item.fun_email}</Td>
-                                         
+                                          <Td data-label="">{item.nome}</Td>
+                                          <Td>{item.email}</Td>
                                           <Td>                                            
                                           <Stack direction="row" spacing={4}>
                                               <Button colorScheme="yellow" variant="outline">  
@@ -470,6 +678,17 @@ export default function Profile() {
                                                                                                    
                                 </Tbody>
                             </Table>
+                            {loadingMore && <h2 style={{textAlign:'center', marginTop: 15 }}> Buscando dados...</h2>}
+                            {!loadingMore && !isEmpty &&  
+                            <div className="container">
+                                <button 
+                                className="logout-btn"
+                                onClick={handleMore}>
+                                  Buscar mais
+                                </button>
+                            </div>}
+                          
+
                         </Box>
                     </Box>
                     </>

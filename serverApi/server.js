@@ -169,7 +169,7 @@ app.post('/api/cadFuncionario', (req, res) => {
 
 app.get('/api/buscarFuncionanio', (req, res) => {
   db.query( 
-    "SELECT * FROM cad_funcionarios",
+    "SELECT * FROM cad_funcionarios LIMIT 5",
     (err, result) => {
      if(err) res.send({err: err});
      if(result){
@@ -180,6 +180,20 @@ app.get('/api/buscarFuncionanio', (req, res) => {
     })
 
 })  
+
+app.post('/api/buscarUltimoIdFunc', (req, res) => {
+  
+  const ultimoId = req.body.ultimoId
+
+  db.query( 
+    "SELECT * FROM cad_funcionarios WHERE fun_id > ?",
+    [ultimoId],(err, result) => {
+      if(err) res.send({err: err});
+      else res.send(result)
+    })
+
+})  
+
 
 
 app.put('/api/EmpUpdate', (req, res) => {
@@ -213,24 +227,30 @@ app.get('/api/buscarUser', (req, res) => {
 
 })
 
-
-
 //gravar ponto
-app.post('/api/register', (req, res) => {
+app.post('/api/baterponto', (req, res) => {
   const horas = req.body.horas
-  const user = 'lindson'
-  const sqlInsert = "INSERT INTO banco_horas (bh_usu, bh_horas) VALUES (?, ?)"
-  db.query(sqlInsert, [user, horas], (err, results) => {
-    console.log(err);
+  const nome =  req.body.nome
+  const data = req.body.data
+
+  db.query("INSERT INTO banco_horas (banch_nome, banch_hora, banch_date) VALUES (?, ?, ?)",
+  [nome, horas, data], (err, result) => {
+    if(err) res.send({err: err});
+    else res.send("TUDO OK")
   })
+
 })
 
 
-app.get('/api/get', (req, res) => {
-    const sqlGet = "SELECT * FROM cad_acesso";
-    db.query(sqlGet,(err, results) => {
-      res.send(results)
-    })
+app.post('/api/buscarPontos', (req, res) => {
+
+  const nome = req.body.nome
+
+  db.query("SELECT * FROM banco_horas WHERE banch_nome = ?",
+  [nome], (err, result) => {
+    if(err) res.send({err: err});
+    else res.send(result)
+  })
 })
 
 

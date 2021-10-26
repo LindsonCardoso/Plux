@@ -69,6 +69,8 @@ const items = [
     ]
   },
   "divider",
+  { name: "Bater ponto",  label: "Bater ponto", path: "/registrar-ponto", Icon: HomeIcon },
+  "divider",
   {
     name: "settings",
     label: "Settings",

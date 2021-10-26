@@ -11,7 +11,7 @@ import Profile from '../pages/Profile'
 
 //components
 import { Dashboard } from '../pages/Dashboard'
-//import  RegistrarPonto  from '../pages/TimePoint'
+import  RegistrarPonto  from '../pages/TimePoint'
 
 
 export default function Routes(){
@@ -23,6 +23,7 @@ export default function Routes(){
          <Route  exact path="/dashboard" component={Dashboard} isPrivate/>
          <Route  exact path="/profile" component={Profile} isPrivate/>
          <Route  exact path="/cadastro-de-funcionario" component={CadastroFuncion} isPrivate/>
+         <Route  exact path="/registrar-ponto" component={RegistrarPonto} isPrivate/>
         
         </Switch>
     )
