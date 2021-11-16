@@ -3,14 +3,10 @@ import { useState, useContext,useEffect, useRef} from 'react'
 import { Header } from '../../components/Header';
 import Title from '../../components/Title';
 import axios from 'axios';
-import { Form } from "@unform/web";
-import { toast } from 'react-toastify';
-import { DrawerR } from '../../components/drawer'
-import * as Yup from 'yup';
 import { FiSettings, FiPlusCircle } from 'react-icons/fi';
 import { MdVisibility , MdSearch }  from "react-icons/md";
 import { AuthContext } from '../../contexts/auth'
-import {
+import {Container,
     Text,FormLabel,
     Input,Icon,
     Center,Box,
@@ -30,14 +26,12 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton, Checkbox,DrawerFooter,
-    useDisclosure, Divider,DrawerCloseButton, Alert
+    useDisclosure, Divider,useColorModeValue,
 } from "@chakra-ui/react"
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
-import { useToast,Spinner } from "@chakra-ui/react"
+import { useToast } from "@chakra-ui/react"
 
-
-
-export default function Profile() {
+const Profile = () => {
 
     const { signOut, loadingAuth, } = useContext(AuthContext);
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -212,7 +206,6 @@ export default function Profile() {
     setLoadingMore(true);
   
     //var isDataListFunc = listFuncionario.indexOf(listFuncionario[listFuncionario.length -1])
-
   
     //var isDataLastFunc = lastFuncionario[lastFuncionario.length -1]
 
@@ -224,16 +217,14 @@ export default function Profile() {
         updateState(response.data)
       })
       setIsEmpty(true)
-
-   
   }
 
 
 
   if(loading) {
     return(
-      <>
-      <Box w="100%" h="100%" bg="#f8f8f8">
+      <Container>
+      <Box w="100%" h="100%">
       <Header />
       
           <Box 
@@ -256,24 +247,22 @@ export default function Profile() {
       </Box>
 
 
-      </>
+      </Container>
     )
   }
 
 
-
-
     return (
         <>
-            <Box w="100%" h="100%" bg="#f8f8f8">
+            <Box w="100%" h="100%">
                 <Header />
                
                     <Box 
                     shadow="md"
-                    borderRadius="md" 
-                    bg="#FFF"
+                    bborderRadius="md"
                     margin="0 1rem 0rem 1rem"
-                   
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
+                    bg={useColorModeValue('whiteAlpha.500', 'whiteAlpha.200')}
                     >
                      <Title name="Cadastro de colaboradores">
                             <FiSettings size={25} />
@@ -293,7 +282,7 @@ export default function Profile() {
                                         Adicionar colaborador
                                     </Button>
                                     
-                                    <Drawer onClose={onClose} isOpen={isOpen} size={size}>
+                                    <Drawer  onClose={onClose} isOpen={isOpen} size={size}>
                                     <DrawerOverlay />
                                     <DrawerContent>
                                 
@@ -441,9 +430,7 @@ export default function Profile() {
                                     <p></p>
                                     ) : (
                                     <p>teste</p>
-                                    )}
-
-                                  
+                                    )}                                  
                                     </form>
                                     </DrawerBody>
                                         <DrawerFooter>
@@ -466,7 +453,7 @@ export default function Profile() {
                 ) : (
                     <>
                     <Box w="100%" p={6}>
-                        <Box w="100%" h="100%">
+                        <Box w="100%" h="100%"  >
                             <Stack float="right">
                                     <Button leftIcon={<FiPlusCircle />} colorScheme="teal" variant="solid"
                                      onClick={handleClick}>
@@ -641,7 +628,7 @@ export default function Profile() {
                                 </Drawer>
                             </Stack>
 
-                            <Table size="sm">
+                            <Table size="sm"  >
                                 <Thead>
                                     <Tr>
                                         <Th>Nome</Th>                                    
@@ -677,17 +664,18 @@ export default function Profile() {
 
                                                                                                    
                                 </Tbody>
-                            </Table>
-                            {loadingMore && <h2 style={{textAlign:'center', marginTop: 15 }}> Buscando dados...</h2>}
-                            {!loadingMore && !isEmpty &&  
-                            <div className="container">
-                                <button 
-                                className="logout-btn"
-                                onClick={handleMore}>
-                                  Buscar mais
-                                </button>
-                            </div>}
+                                {loadingMore && <h2 style={{textAlign:'center', marginTop: 15 }}> Buscando dados...</h2>}
+                                {!loadingMore && !isEmpty &&  
+                                  <Box  my={4}>
+                                    <Button 
+                                    colorScheme="teal"
+                                    onClick={handleMore}>
+                                      Buscar mais
+                                    </Button>
+                                </Box>}
                           
+                            </Table>
+                           
 
                         </Box>
                     </Box>
@@ -697,13 +685,16 @@ export default function Profile() {
 
 
 
-                <div className="container">
-                    <button className="logout-btn" onClick={() => signOut()} >
+              <Center>
+                <Box>
+                    <Button className="logout-btn" onClick={() => signOut()} >
                         Sair
-                    </button>
-                </div>
-
+                    </Button>
+                </Box>
+            </Center>
             </Box>
             </>
     )
 }
+
+export default Profile

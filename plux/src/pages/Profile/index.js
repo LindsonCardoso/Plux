@@ -64,7 +64,7 @@ export default function Profile(){
     </Flex>
 
     <Box w="100%"  p={6}  >
-     <SimpleGrid columns={2} spacingX="40px" spacingY="20px" bg="#FFF">
+     <SimpleGrid columns={2} spacingX="40px" spacingY="20px">
  
       <Box w="100%" h="100%" >
       <Stack pl={3}>
@@ -226,7 +226,6 @@ export default function Profile(){
           placeholder="Digite"
           size="lg"
           variant="filled"
-        
            
          /> 
         </FormControl>
@@ -255,11 +254,13 @@ export default function Profile(){
        </SimpleGrid>
    </Box>  
 
-   <div className="container">
-            <button className="logout-btn" onClick={ () => signOut() } >
-               Sair
-            </button>
-        </div>
+   <Center>
+                <Box>
+                    <Button className="logout-btn" onClick={() => signOut()} >
+                        Sair
+                    </Button>
+                </Box>
+            </Center>
 
   </Box>
 

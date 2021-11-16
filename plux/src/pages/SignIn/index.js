@@ -4,7 +4,19 @@ import { AuthContext } from '../../contexts/auth'
 import { Link } from 'react-router-dom'
 import { Input } from "@chakra-ui/react"
 import { toast } from 'react-toastify';
-
+import { 
+  Container,
+  Box, 
+  Stack,
+  Heading,
+  Flex,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuButton,
+  IconButton,
+  useColorModeValue,Center
+} from '@chakra-ui/react'
 
 import './signin.css'
 
@@ -30,8 +42,9 @@ export default function SingnIn(){
 
 
     return( 
-        <div className="container-center"> 
-         <div className="login">
+ 
+        <Box className="container-center"> 
+          <Box className="login">
           <div className="login-area">
             <img src={Logo} alt=""/>
           </div>
@@ -44,7 +57,9 @@ export default function SingnIn(){
           <div className="register">
             <Link to="/registrar-ponto">Registrar ponto agora</Link>
           </div>
-         </div>
-        </div>
+         </Box>
+     
+        </Box>
+
     )
 }   

@@ -30,7 +30,7 @@ export default function AuthProvider({children}){
 
 
     //Login usuario
-    async function singIn(login, senha,nomeEmpresa, email){
+    async function singIn(login, senha, nomeEmpresa, email){
     
         setLoadingAuth(true)   
             
@@ -43,7 +43,7 @@ export default function AuthProvider({children}){
             toast.error("Login/senha invalidos !", {
                 icon: "☹️"
             });
-        }else{
+        }if(response.data[0].usu_perfil === 'A'){
             let uid =  response.data[0].usu_id;
             const dataUser = await response.data;
             console.log('dados do response: '+(dataUser))
@@ -61,8 +61,7 @@ export default function AuthProvider({children}){
                         nome: dataUser[0].usu_nome,
                         avatarUrl: dataUser[0].usu_avatar,
                         email: dataUser[0].usu_email,
-                       
-               
+                        perfil: dataUser[0].usu_perfil,
                     }          
                     console.log('dados do datauser: '+JSON.stringify(data));
                     setUser(data)
@@ -72,6 +71,36 @@ export default function AuthProvider({children}){
                         icon: "🚀"
                     });       
                 });
+
+        }else{ 
+            let uid =  response.data[0].usu_id;
+            const dataUser = await response.data;
+            //console.log('dados do response: '+(dataUser))
+            
+            Axios.post('http://localhost:3001/api/DadosEmpresa',{ 
+                email: dataUser[0].usu_email,   
+                }).then( async (res) => {
+                    setLoadingAuth(false);
+                    console.log('dados da empresa '+res.data)      
+                    const dataEmpresa = await res.data;  
+                    console.log('dados do empresa: '+JSON.stringify(dataEmpresa));
+
+                    let data = {
+                        uid: uid,
+                        nome: dataUser[0].usu_nome,
+                        avatarUrl: dataUser[0].usu_avatar,
+                        email: dataUser[0].usu_email,
+                        perfil: dataUser[0].usu_perfil,
+                    }          
+                    console.log('dados do datauser: '+JSON.stringify(data));
+                    setUser(data)
+                    storegeUser(data)
+                    setLoadingAuth(false);  
+                    toast.success("Bem Vindo de volta !", {
+                        icon: "🚀"
+                    });       
+                });
+      
         }
     }).catch((error) => {
             console.log(error);

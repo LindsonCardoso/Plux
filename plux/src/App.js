@@ -4,20 +4,12 @@ import { BrowserRouter} from 'react-router-dom'
 import Routes from './routes'
 import AuthProvider from './contexts/auth';
 import { ToastContainer } from 'react-toastify';
-import { ChakraProvider, extendTheme } from "@chakra-ui/react"
+import { ChakraProvider } from "@chakra-ui/react";
+import theme from '../src/lib/theme'
 
-const colors = {
-  brand: {
-    900: "#1a365d",
-    800: "#153e75",
-    700: "#2a69ac",
-  },
-}
-const theme = extendTheme({ colors })
-
-function App({ Component }) {
+const App = () => {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme} >
     <AuthProvider>
      <BrowserRouter>
       <ToastContainer autoClose={3000}/>

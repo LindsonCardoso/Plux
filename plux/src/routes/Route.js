@@ -2,12 +2,13 @@
 import { useContext } from 'react'
 import { Route, Redirect } from 'react-router-dom';
 import { AuthContext } from '../contexts/auth'
-
+import theme from '../lib/theme'
 
 export default function RouteWrapper({
     component: Component,
     isPrivate,
     ...rest
+    
 }){
 
     const { signed, loading} = useContext(AuthContext)
@@ -28,6 +29,7 @@ export default function RouteWrapper({
 
     return(
         <Route 
+   
         {...rest}
         render={props => (
             <Component {...props} />

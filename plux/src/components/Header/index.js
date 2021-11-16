@@ -6,7 +6,19 @@ import './header.css'
 //component
 import { AuthContext } from '../../contexts/auth'
 import { Link } from 'react-router-dom'
-
+import { 
+  Container,
+  Box, 
+  Stack,
+  Heading,
+  Flex,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuButton,
+  IconButton,
+  useColorModeValue
+} from '@chakra-ui/react'
 import SidebarItem from "./SideBarData"
 
 //icons
@@ -17,7 +29,7 @@ import { IconContext } from "react-icons/lib";
 
 //img
 import avatar from '../../assets/avatar.png'
-
+import ThemeToggleButton from '../theme-toggle-button'
 
 //styled
 const Nav = styled.div`
@@ -84,7 +96,7 @@ const TitleLogo = styled.h1`
 `;
 
 
-export const Header = () => {
+export const Header = (props) => {
 
     const { user } = useContext(AuthContext)
 
@@ -94,27 +106,30 @@ export const Header = () => {
    
     return (
     <>
-    <IconContext.Provider value={{ color: "#fff" }}>
+    <IconContext.Provider value={{}}>
         <Nav>
           <NavIcon to="#">
             <FaIcons.FaBars size={24} style={{color: "black"}} onClick={showSidebar} />
           </NavIcon>
-          <TitleLogo
-          
-          >
+          <TitleLogo>
             PluX
           </TitleLogo>
+          <ThemeToggleButton/>
         </Nav>
         <SidebarNav sidebar={sidebar}>
           <SidebarWrap>
             <NavIcon to="#">
               <TitleIcon>PluX</TitleIcon>
               <AiIcons.AiOutlineArrowLeft size={24} onClick={showSidebar} style={{color: "black"}} />
+           
             </NavIcon>
-            <SidebarItem/>        
+           
+            <SidebarItem/>   
+          
           </SidebarWrap>
+         
         </SidebarNav>
-     
+       
       </IconContext.Provider>
     </>
    ) 

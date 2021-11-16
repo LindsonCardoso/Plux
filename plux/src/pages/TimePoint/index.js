@@ -3,11 +3,9 @@ import axios from 'axios'
 import Title from '../../components/Title';
 import { 
      Box,Center,Container,Heading, Stack,Text,Button,
-     HStack, VStack,
-     FormLabel,
-     Input,Icon,FormControl,useToast, Table,Thead,
+      useToast, Table,Thead,
      Tbody,Tr,
-     Th,Td,
+     Th,Td,useColorModeValue,
     } from "@chakra-ui/react"
 import { FiSettings, FiPlusCircle } from 'react-icons/fi';
 import { AuthContext } from '../../contexts/auth'
@@ -144,21 +142,20 @@ export default function Registrar(){
       })
       setIsEmpty(true);
     }
-   
+ 
 
 //verifincado se tem dados dos funcionarios cadastrados 
-  if(loading) {
+  if(loading) { 
     return(
       <>
-      <Box w="100%" h="100%" bg="#f8f8f8">
+      <Box w="100%" h="100%">
       <Header />
       
           <Box 
           shadow="md"
           borderRadius="md" 
-          bg="#FFF"
+          colorScheme="teal"
           margin="0 1rem 0rem 1rem"
-          
           >
           <Title name="Cadastro de colaboradores">
             <FiSettings size={25} />
@@ -180,12 +177,12 @@ export default function Registrar(){
 
     return(
         <>
-        <Box w="100%" h="100%" bg="#f8f8f8">
+        <Box w="100%" h="100%" >
           <Header/>
             <Box 
             shadow="md"
             borderRadius="md" 
-            bg="#FFF"
+            colorScheme="teal"
             margin="0 1rem 0rem 1rem"
             >
                 <Title name="Registro de ponto">
@@ -222,6 +219,7 @@ export default function Registrar(){
                 </Stack>
                 </Box>
             </Container> 
+            <Box w="100%" p={6} >
             <Table size="sm">
                                 <Thead>
                                     <Tr>
@@ -249,18 +247,20 @@ export default function Registrar(){
                                                                                                    
                                 </Tbody>
                             </Table>
+                            </Box>
             </> 
             ) : (
             <>
+            <Box w="100%" p={6}  >
             <Container >
             <Heading fontSize="xxx-large" textAlign="center" mt={4} color="green">PluX</Heading>
             <Box p={5} shadow="md" borderWidth="1px"  borderRadius="0.6rem">
             <Stack spacing={10}>
     
-            <Text  textAlign="center" fontSize="xl" color="black">{date}</Text> 
+            <Text  textAlign="center" fontSize="xl">{date}</Text> 
         
             <Center>
-                <Text fontSize="6xl" color="black">{time}</Text>
+                <Text fontSize="6xl">{time}</Text>
             </Center>
 
             <Center>
@@ -279,7 +279,8 @@ export default function Registrar(){
                 </Stack>
                 </Box>
             </Container> 
-            <Table size="sm">
+          
+            <Table size="sm"  my={6}>
                                 <Thead>
                                     <Tr>
                                         <Th>Nome</Th>                                    
@@ -305,9 +306,29 @@ export default function Registrar(){
 
                                                                                                    
                                 </Tbody>
+                                {loadingMore && <h2 style={{textAlign:'center', marginTop: 15 }}> Buscando dados...</h2>}
+                            {!loadingMore && !isEmpty &&  
+                            <Box my={4}>
+                                <Button 
+                                className="logout-btn"
+                                onClick={handleMore}>
+                                  Buscar mais
+                                </Button>
+                            </Box>}
+                          
                             </Table>
+                            </Box>
             </>
             )}
+
+            <Center>
+                <Box>
+                    <Button className="logout-btn" onClick={() => signOut()} >
+                        Sair
+                    </Button>
+                </Box>
+            </Center>
+
         </Box>
    </>
     )
