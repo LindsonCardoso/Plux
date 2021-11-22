@@ -49,8 +49,19 @@ const NavIcon = styled(Link)`
   
   justify-content: flex-end;
   padding: 2rem;
+
+`;
+
+
+const NavIconTheme = styled.div`
+
+  height: 80px;
+  display: flex;
  
-   
+  align-items: center;
+  
+  justify-content: flex-end;
+  padding: 2rem;
 
 `;
   
@@ -114,7 +125,10 @@ export const Header = (props) => {
           <TitleLogo>
             PluX
           </TitleLogo>
+          <NavIconTheme>
           <ThemeToggleButton/>
+          </NavIconTheme>
+         
         </Nav>
         <SidebarNav sidebar={sidebar}>
           <SidebarWrap>

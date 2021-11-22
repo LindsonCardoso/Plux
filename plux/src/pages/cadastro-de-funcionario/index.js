@@ -30,7 +30,7 @@ import {Container,
 } from "@chakra-ui/react"
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
 import { useToast } from "@chakra-ui/react"
-
+import TableFixa from '../../components/jornadas/fixa'
 const Profile = () => {
 
     const { signOut, loadingAuth, } = useContext(AuthContext);
@@ -360,72 +360,78 @@ const Profile = () => {
                                     <Center mt={4}>
                                      <Button colorScheme="blue" onClick={handleShow} >Adicionar nova jornada de trabalho</Button>
                                     </Center>
-                                    {show  &&
-                                    <>
-                                    <Modal                                        
-                                    isOpen={isOpen}
-                                    onClose={handleClose}                                            
-                                    >
-                                    <ModalOverlay/>
-                                    <ModalContent>
-                                    <ModalHeader>Adicionar nova jornada de trabalho</ModalHeader>
-                                    <ModalCloseButton />
 
-                                    <ModalBody pb={6}>
+                                        {show  &&
+                                        <>
+                                        <Modal                                        
+                                        isOpen={isOpen}
+                                        onClose={handleClose} 
+                                        size="xl"                                             
+                                        >
+                                        <ModalOverlay/>
+                                        <ModalContent>
+                                        <ModalHeader>Adicionar nova jornada de trabalho</ModalHeader>
+                                        <ModalCloseButton />
 
-                                    <FormControl>
-                                    <FormLabel>Nome da jornada</FormLabel>
-                                    <Checkbox defaultIsChecked>Seg-Dom</Checkbox>
-                                    </FormControl>
+                                        <ModalBody pb={6}>
 
-                                    <Center mt={4}>
-                                    <Divider orientation="horizontal"/>
-                                    </Center>  
+                                        <FormControl>
+                                        <FormLabel>Nome da jornada</FormLabel>
+                                        <Checkbox defaultIsChecked>Seg-Dom</Checkbox>
+                                        </FormControl>
 
-                                    <Tabs mt={4} size="md" variant="enclosed">
-                                    <TabList>
-                                    <Tab>Fixa</Tab>
-                                    <Tab>Two</Tab>
-                                    </TabList>
-                                    <TabPanels>
-                                    <TabPanel>
+                                        <Center mt={4}>
+                                         <Divider orientation="horizontal"/>
+                                        </Center>  
+
+                                        <Tabs mt={4} size="md" variant="enclosed">
+                                        <TabList>
+                                          <Tab>Fixa</Tab>
+                                          <Tab>Two</Tab>
+                                        </TabList>
+                                        
+                                        <TabPanels>
+                                        
+                                        <TabPanel>
+                                        <p>two!</p>
+                                        </TabPanel>
+
+                                        <TabPanel>
+                                        <p>two! teste</p>
+                                        </TabPanel>
+
+                                        </TabPanels>
+                                        </Tabs>
 
 
-                                    </TabPanel>
-                                    <TabPanel>
-                                    <p>two!</p>
-                                    </TabPanel>
-                                    </TabPanels>
-                                    </Tabs>
 
+                                        </ModalBody>
 
+                                        <ModalFooter>
 
-                                    </ModalBody>
+                                        <Button 
+                                        colorScheme="blue" 
+                                        mr={3} 
+                                        type="submit" 
+                                        onClick={() =>
+                                        toast({
+                                        title: "Informações salvas",
+                                        description: "Enviaremos email para o usuário.",
+                                        status: "success",
+                                        duration: 3000,
+                                        isClosable: true,
+                                        })
+                                        }
+                                        >
+                                        Save
+                                        </Button>
+                                        <Button onClick={handleClose}>Cancel</Button>
+                                        </ModalFooter>
+                                        </ModalContent>
+                                        </Modal>
+                                        </>
+                                        }                    
 
-                                    <ModalFooter>
-
-                                    <Button 
-                                    colorScheme="blue" 
-                                    mr={3} 
-                                    type="submit" 
-                                    onClick={() =>
-                                    toast({
-                                    title: "Informações salvas",
-                                    description: "Enviaremos email para o usuário.",
-                                    status: "success",
-                                    duration: 3000,
-                                    isClosable: true,
-                                    })
-                                    }
-                                    >
-                                    Save
-                                    </Button>
-                                    <Button onClick={handleClose}>Cancel</Button>
-                                    </ModalFooter>
-                                    </ModalContent>
-                                    </Modal>
-                                    </>
-                                    }                    
                                     {jornada.length === 0 ? (
                                     <p></p>
                                     ) : (
@@ -542,36 +548,39 @@ const Profile = () => {
                                     <>
                                     <Modal                                        
                                     isOpen={isOpen}
-                                    onClose={handleClose}                                            
+                                    onClose={handleClose}   
+                                    size="xl"                                   
                                     >
                                     <ModalOverlay/>
                                     <ModalContent>
                                     <ModalHeader>Adicionar nova jornada de trabalho</ModalHeader>
                                     <ModalCloseButton />
 
-                                    <ModalBody pb={6}>
+                                    <ModalBody pb={10} >
 
                                     <FormControl>
                                     <FormLabel>Nome da jornada</FormLabel>
                                     <Checkbox defaultIsChecked>Seg-Dom</Checkbox>
                                     </FormControl>
 
-                                    <Center mt={4}>
+                                    <Center mt={5}>
                                     <Divider orientation="horizontal"/>
                                     </Center>  
 
-                                    <Tabs mt={4} size="md" variant="enclosed">
+                                    <Tabs mt={5} variant="enclosed">
                                     <TabList>
                                     <Tab>Fixa</Tab>
                                     <Tab>Two</Tab>
                                     </TabList>
                                     <TabPanels>
                                     <TabPanel>
-
+                                    <Box marginLeft={-9}>
+                                    <TableFixa />
+                                    </Box>
 
                                     </TabPanel>
                                     <TabPanel>
-                                    <p>two!</p>
+                                    <p>Em Breve!</p>
                                     </TabPanel>
                                     </TabPanels>
                                     </Tabs>

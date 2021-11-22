@@ -3,15 +3,20 @@ import axios from 'axios'
 import Title from './Title/index';
 import { 
      Box,Center,Container,Heading, Stack,Text,Button,
-      useToast, Input
+      useToast, Input,Icon
     } from "@chakra-ui/react"
 import { FiSettings, FiPlusCircle } from 'react-icons/fi';
 import { AuthContext } from '../contexts/auth'
 import Footer from '../components/footer'
+
+
+
 const Ponto = () => {
     const formRef = useRef(null)
     const toast = useToast()
     const { signOut, loadingAuth, user } = useContext(AuthContext);
+    const [codigo, setCodigo] = useState("")
+    const [dadosCodigo, setDadosCodigo] = useState([])
 
     useEffect(() => {
       const timer = setInterval(() => { // Creates an interval which will update the current data every minute
@@ -36,33 +41,48 @@ const Ponto = () => {
     const dataDeRegistroPonto = `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`;
     
 
-    const handleSubmit = async () => {
-        
-      try{
-        await axios.post("http://localhost:3001/api/baterponto", {
-            nome: user.nome,
-            horas: timeSecunds,
-            data:  dataDeRegistroPonto,
+    const handleSubmit = async (e) => {
+      e.preventDefault()
+        axios.post("http://localhost:3001/api/buscarCodigo", {
+            codigo: codigo,
         }).then(async (response, value) => {
             if(response.data.message){
                 toast({
-                  title: "Ocorrreu algum error.",
+                  title: "Codigo não existe!",
                   status: "error",
                   duration: 3600,
                   isClosable: true,
                 })
-             
             }else {
-            toast({
-              title: "Registro salvo!",
-              status: "success",
-              duration: 3600,
-              isClosable: true,
-            })
-          }
-        });}catch(error){
-            throw new Error(error.message);
-        }
+              const dateFunc =  await response.data;
+               console.log(JSON.stringify(dateFunc))
+               axios.post("http://localhost:3001/api/baterponto", {
+                codigo:  codigo,
+                nome: dateFunc[0].fun_nome,
+                horas: timeSecunds,
+                data:  dataDeRegistroPonto,
+              }).then(async (res) => {
+                toast({
+                  title: "Registro salvo!",
+                  status: "success",
+                  duration: 3600,
+                  isClosable: true,
+                })
+
+                setCodigo("");
+               
+              })
+              
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            toast.error("Ops algo deu errado !", {
+                icon: "☹️"
+            });
+        })
+         
+
     }
 
 
@@ -90,7 +110,14 @@ const Ponto = () => {
             <Center>
                 <Text fontSize="6xl">{time}</Text>
             </Center>
-
+            <Box style={{alignItems:"center",justifyContent: "center", textAlign: "center"}}>
+            <Input
+              placeholder="Codigo"
+              value={codigo}
+              onChange={(e) => setCodigo(e.target.value)}
+              name="codigo"
+            />
+            </Box>
             <Center>
                 <Button 
                 colorScheme="green"
@@ -110,8 +137,8 @@ const Ponto = () => {
             </Container> 
 
             <Container maxW="container.md" pt={14}>
-        <Footer />
-      </Container>
+              <Footer />
+            </Container>
         </Box>
    </>
     )
