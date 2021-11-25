@@ -261,9 +261,42 @@ app.post('/api/baterponto', (req, res) => {
       }
      }else res.send({message: "Ocorreu algum erro, tente mais tarde"})
     }); 
+})
 
+// gravar ponto adm
+app.post('/api/baterpontoadm', (req, res) => {
 
+  const codigo = req.body.codigo
+  const horas = req.body.horas
+  const nome =  req.body.nome
+  const data = req.body.data
 
+ 
+  db.query(
+    "SELECT COUNT(*) verificar from cad_usuario where  usu_id = ?", 
+    [codigo],
+    (err, result) => {
+      if(err) res.send({err: err});
+      if(result){
+       
+      console.log(result)
+      
+      const verif = JSON.stringify(result);
+      console.log("Verificar: " + verif);
+      const json = JSON.parse(verif);
+      console.log(json[0].verificar)
+      const Id = json[0].verificar; 
+      if(Id === 1){ 
+        db.query("INSERT INTO banco_horas (banch_nome, banch_hora, banch_date) VALUES (?, ?, ?)",
+        [nome, horas, data], (err, result) => {
+          if(err) res.send({err: err});
+          else res.send("TUDO OK")
+        })      
+      }else if(Id === 0){ 
+        res.send({message: "Codigo não encontrado no cadastro"});
+      }
+     }else res.send({message: "Ocorreu algum erro, tente mais tarde"})
+    }); 
 })
 
 app.post('/api/buscarCodigo', (req, res) => {

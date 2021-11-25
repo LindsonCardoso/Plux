@@ -59,10 +59,11 @@ export default function Registrar(){
     const handleSubmit = async ()=>{
         console.log(user.nome);        
       try{
-        await axios.post("http://localhost:3001/api/baterponto", {
+        await axios.post("http://localhost:3001/api/baterpontoadm", {
             nome: user.nome,
             horas: timeSecunds,
             data:  dataDeRegistroPonto,
+            codigo: user.uid
         }).then(async (response, value) => {
             if(response.data.message){
                 console.log(response.data.message)
@@ -90,6 +91,8 @@ export default function Registrar(){
          
     const usuario = user.nome
     console.log('nome'+usuario)
+
+    const codigo = user.uid
     
     
     const BuscarRegistroPontos = async ()=>{

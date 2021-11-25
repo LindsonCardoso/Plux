@@ -3,35 +3,42 @@ import Axios from 'axios'
 import { AuthContext } from '../../contexts/auth'
 import { Link } from 'react-router-dom'
 import { Input } from "@chakra-ui/react"
-import { toast } from 'react-toastify';
 import { 
-  Container,
   Box, 
-  Stack,
-  Heading,
   Flex,
-  Menu,
-  MenuItem,
-  MenuList,
-  MenuButton,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  Stack,
+  chakra,
+  Button,
+  Avatar,
+  Heading,
+  FormControl,
+  FormLabel,
   IconButton,
   useColorModeValue,Center
 } from '@chakra-ui/react'
-
-import './signin.css'
-
-
+import { FaUserAlt, FaLock } from "react-icons/fa";
+import ThemeToggleButton from '../../components/theme-toggle-button'
 import Logo from '../../assets/logo.jpg'
 
+
+const CFaUserAlt = chakra(FaUserAlt);
+const CFaLock = chakra(FaLock);
+
+
 export default function SingnIn(){
-    
+  const [showPassword, setShowPassword] = useState(false);
+  const handleShowClick = () => setShowPassword(!showPassword);
+
     const [login, setLogin]  = useState('')
     const [senha, setSenha] = useState('')
 
     //API Login
     const { singIn, loadingAuth } = useContext(AuthContext)
   //API CADASTRO
-    const Login = (e) => {
+  const Login = (e) => {
 
       e.preventDefault();
       if(login !== '' && senha !== '') {
@@ -40,26 +47,64 @@ export default function SingnIn(){
     
     }
 
-
     return( 
  
-        <Box className="container-center"> 
-          <Box className="login">
-          <div className="login-area">
-            <img src={Logo} alt=""/>
-          </div>
-          <form onSubmit={Login}>
-            <input type="text" placeholder="login"  onChange={ (e) => {setLogin(e.target.value)}}/>
-            <input type="password"  placeholder="senha" onChange={(e) => {setSenha(e.target.value)}} />
-            <button type="submit" className="btn">{loadingAuth ? 'Carregando...' : 'Entrar'}</button>
-          </form>
-          <Link to="/register">Criar conta</Link>
-          <div className="register">
-            <Link to="/registrar-ponto">Registrar ponto agora</Link>
-          </div>
-         </Box>
-     
+      <Flex
+      flexDirection="column"
+      width="100wh"
+      height="100vh"
+      justifyContent="center"
+      alignItems="center"
+       align="center">
+   
+      <Box
+        p={30}
+        maxWidth="500px"
+        borderWidth={2}
+        borderRadius={8}
+        boxShadow="md"
+      >
+        <Box flex={1} marginBottom={4} maxWidth="auto">
+        <img src={Logo} alt="" style={{borderRadius:"10px"}}/>   
         </Box>
 
+        <form onSubmit={Login}>
+        <FormControl isRequired>
+          <FormLabel>Login</FormLabel>
+          <Input
+            type="text"
+            size="lg"
+            placeholder="login"  onChange={ (e) => {setLogin(e.target.value)}}
+          />
+        </FormControl>
+        <FormControl isRequired mt={6}>
+          <FormLabel>Senha</FormLabel>
+          <Input
+            type="password"
+            placeholder="*******"
+            size="lg"
+            onChange={(e) => {setSenha(e.target.value)}}
+          />
+        </FormControl>
+        <Button
+          variantColor="teal"
+          variant="outline"
+          type="submit"
+          width="full"
+          mt={4}
+        >
+          {loadingAuth ? 'Carregando...' : 'Entrar'}
+  </Button>
+</form>
+       
+      <Box  mt={2} justifyContent="center" alignItems="center" textAlign="center">
+        Nao tem conta?{" "}
+        <Link  to="/register" color="green.600" >
+         Criar conta
+        </Link>
+      </Box>
+      </Box>
+    </Flex>
+      
     )
 }   

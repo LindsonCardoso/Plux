@@ -1,10 +1,17 @@
 
 import { useState,useContext } from 'react';
 import { Link,useHistory } from 'react-router-dom';
-import { AuthContext } from '../../contexts/auth'
+import { AuthContext } from '../../contexts/auth';
+import { Input } from "@chakra-ui/react";
+import { 
+  Box, 
+  Flex,
+  Button,
+  FormControl,
+  FormLabel,Heading
+} from '@chakra-ui/react'
 
-
-import Logo from '../../assets/logo.jpg'
+import Logo from '../../assets/logo.jpg';
 
 function SignUp() {
   const [nome, setNome] = useState('');
@@ -31,24 +38,89 @@ function SignUp() {
 
   
   return (
-    <div className="container-center">
-      <div className="login">
-      <div className="login-area">
-            <img src={Logo}  alt=""/>
-          </div>
+    <Flex
+    flexDirection="column"
+    width="100wh"
+    height="100vh"
+    justifyContent="center"
+    alignItems="center"
+     align="center">
+ 
+    <Box
+      p={30}
+      borderWidth={2}
+      borderRadius={8}
+      boxShadow="md"
+      width="30%"
+  >
+      <Box flex={1} marginBottom={4} textAlign="center">
+      <Heading as="h3" size="lg" >Olá, informe os dados abaixo! 😊</Heading>
+       </Box>
 
-        <form onSubmit={Cadastro}>
-          <h1>Cadastrar uma conta</h1>
-          <input type="text" placeholder="Nome completo" value={nome} onChange={(e) => {setNome(e.target.value)}} />
-          <input type="text" placeholder="login" value={login} onChange={ (e) => {setLogin(e.target.value)}}/>
-          <input type="email" placeholder="email@email.com" value={email} onChange={ (e) => {setEmail(e.target.value)}}/>
-          <input type="password" placeholder="*******" value={senha}  onChange={ (e) => {setSenha(e.target.value)}}/>
-          <button type="submit">{loadingAuth ? 'Carregando...' : 'Cadastrar'}</button>
-        </form>  
+      <form onSubmit={Cadastro}>
 
-        <Link to="/">Já tem uma conta? Entre</Link>
-      </div>
-    </div>
+   
+      <FormControl isRequired mt={6}>
+        <FormLabel>Nome Completo</FormLabel>
+        <Input
+           placeholder="Nome Completo" 
+           value={nome} 
+          onChange={ (e) => {setNome(e.target.value)}}
+          size="lg"
+
+        />
+      </FormControl>
+
+      <FormControl isRequired mt={6}>
+        <FormLabel>Login</FormLabel>
+        <Input
+           placeholder="login" 
+           value={login} 
+          onChange={ (e) => {setLogin(e.target.value)}}
+          size="lg"
+
+        />
+      </FormControl>
+
+      <FormControl isRequired  mt={6}>
+        <FormLabel>Email</FormLabel>
+        <Input
+          type="email"
+          size="lg"
+          placeholder="Email" 
+          value={email}
+          onChange={ (e) => {setEmail(e.target.value)}}
+        />
+      </FormControl>
+      <FormControl isRequired mt={6}>
+        <FormLabel>Senha</FormLabel>
+        <Input
+          type="password"
+          placeholder="*******"
+          size="lg"
+          value={senha}
+          onChange={(e) => {setSenha(e.target.value)}}
+        />
+      </FormControl>
+      <Button
+        variantColor="teal"
+        variant="outline"
+        type="submit"
+        width="full"
+        mt={4}
+      >
+       {loadingAuth ? 'Carregando...' : 'Cadastrar'}
+</Button>
+</form>
+     
+    <Box  mt={2} justifyContent="center" alignItems="center" textAlign="center">
+    Já tem uma conta?{" "}
+      <Link to="/" color="green.600" >
+      Logar
+      </Link>
+    </Box>
+    </Box>
+  </Flex>
   );
 }
 
