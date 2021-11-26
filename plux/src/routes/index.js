@@ -14,7 +14,7 @@ import { Dashboard } from '../pages/Dashboard'
 import  RegistrarPonto  from '../pages/TimePoint'
 
 import BaterPonto from '../components/Ponto'
-import Administrativo from '../pages/Administrativo'
+import DadosEmpresa from '../pages/Administrativo'
 
 export default function Routes(){
     
@@ -24,7 +24,7 @@ export default function Routes(){
          <Route  exact path="/register" component={SignUp} />
          <Route  exact path="/dashboard" component={Dashboard} isPrivate/>
          <Route  exact path="/profile" component={Profile} isPrivate/>
-         <Route  exact path="/administrativo" component={Administrativo} isPrivate/>
+         <Route  exact path="/dados-empresa" component={DadosEmpresa} isPrivate/>
        
          <Route  exact path="/cadastro-de-funcionario" component={CadastroFuncion} isPrivate/>
          <Route  exact path="/registrar-ponto" component={RegistrarPonto} isPrivate/>  

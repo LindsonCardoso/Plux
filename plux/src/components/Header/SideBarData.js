@@ -59,10 +59,10 @@ const items = [
         ]
       },
       {
-        name: "Administrativo",
-        label: "Administrativo",
+        name: "Dados empresa",
+        label: "Dados empresa",
         Icon: GroupAddIcon,
-        path: "/administrativo",   
+        path: "/dados-empresa",   
     }, 
   
     

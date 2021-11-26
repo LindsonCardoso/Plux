@@ -69,7 +69,7 @@ export default function Profile(){
     // eslint-disable-next-line react-hooks/rules-of-hooks
     bg={useColorModeValue('whiteAlpha.500', 'whiteAlpha.200')}
     >
-    <Title name="Cadastro de colaboradores">
+    <Title name="Cadastro Admin">
           <FiSettings size={25} />
     </Title>
   </Box>
