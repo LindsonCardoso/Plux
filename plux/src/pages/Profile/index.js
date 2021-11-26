@@ -1,6 +1,5 @@
 
-import { useState, useContext } from 'react'
-import './profile.css';
+import React, { useState, useContext } from 'react'
 import { Header } from '../../components/Header';
 import Title from '../../components/Title';
 import Axios from 'axios';
@@ -8,261 +7,258 @@ import { toast } from 'react-toastify';
 import { FiSettings } from 'react-icons/fi';
 import { AuthContext } from '../../contexts/auth'
 import {
+  Button,
+  Flex,
   FormControl,
   FormLabel,
-  Text,
-  Divider,
-  Input,
-  Flex,
-  Center,
   Heading,
+  Input,
+  Stack,
+  useColorModeValue,
+  HStack,
+  Avatar,
+  AvatarBadge,
+  IconButton,
+  Center,
+  InputRightElement,
   Box,
-  SimpleGrid,
-  Button,
-  Stack
-} from "@chakra-ui/react"
-
-
-
+  InputGroup
+} from '@chakra-ui/react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+  
 
 export default function Profile(){
 
   const { user, signOut, setUser, storegeUser, cadEmpresa, loadingAuth } = useContext(AuthContext);
 
-  const [nomeEmpresa, setNomeEmpresa] = useState(user && user.nomeEmpresa);
+  const [nome, setNome] = useState(user && user.nome);
   const [email, setEmail] = useState(user && user.email);
   //const [nome, setNome] = useState(user && user.nome);
-  const [razaoSocial, setRazaoSocial] = useState(user && user.razaoSocial);
-  const [cnpj, setCnpj] = useState(user && user.CNPJ);
-  const [ie, setIe] = useState(user && user.IE);
-  const [ramoAtividade, setRamoAtividade] = useState(user && user.ramoAtividade);
+  const [senha, setSenha] = useState(user && user.nome);
 
   const [telefone, setTelefone] = useState('');
-  const [cep, setCep] = useState('');
+  const [cpf, setCpf] = useState('');
   const [endereco, setEndereco] = useState('')
-  
-  
+  const [showSenha, setShowSenha] = useState(false)
+  const [mostrar, setMostrar] = useState(false);
+
+
+
   const Dados = (e) => {
 
     e.preventDefault();
-    if(nomeEmpresa !== '' && razaoSocial  !== ''&& cnpj   !== ''&& ie !== '' && email !== '') {
-      cadEmpresa(nomeEmpresa,razaoSocial,cnpj,ie, email);
+    if(nome !== '' && cpf  !== ''&& email   !== '' && senha !== '' && telefone !== '') {
+      cadEmpresa(nome,cpf,email,senha,telefone);
     }
-    console.log(nomeEmpresa,razaoSocial,cnpj,ie, email)
+    console.log(nome,cpf,email,senha,telefone)
   }
 
+ 
+
+  const handleShow = () => setMostrar(true);
+  const ocultarSenha = () => setMostrar(false);
 
   return(
-  <Box>
+
+   <>
     <Header/>
-    <Flex > 
-     <Box flex="1" >  
-      <Title name="Editar dados da empresa">
-        <FiSettings size={25} />
-      </Title>
-     </Box>
-    </Flex>
-
-    <Box w="100%"  p={6}  >
-     <SimpleGrid columns={2} spacingX="40px" spacingY="20px">
+    <Box 
+    shadow="md"
+    bborderRadius="md"
+    margin="0 1rem 0rem 1rem"
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    bg={useColorModeValue('whiteAlpha.500', 'whiteAlpha.200')}
+    >
+    <Title name="Cadastro de colaboradores">
+          <FiSettings size={25} />
+    </Title>
+  </Box>
+    <Flex
  
-      <Box w="100%" h="100%" >
-      <Stack pl={3}>
-        <Text as="h1"  pt={5} fontSize="30px" >
-         Dados da Empresa
-        </Text>
-       </Stack>
-       <Center  height="20px">
-    
-        <Divider orientation="vertical" />
-       </Center>
-       <Center>
+    align={'flex-start'}
+    justify={'center'}
+    >
+      
+    <Stack
+      spacing={5}
+      w={'full'}
+      maxW={'60%'}
+      maxH="xl"
+      bg={useColorModeValue('whiteAlpha.500', 'whiteAlpha.200')}
+      rounded={'xl'}
+      boxShadow={'xl'}
+      p={6}
+      my={10}
+    >
+      <Heading lineHeight={1.1} fontSize={{base: '2x1', sm: '3x1'}}>
+         Cadastro
+      </Heading>
 
+
+      <form>
+
+      <Stack 
+        spacing={6} 
+        mt={4} 
+        direction={['column', 'row']}>
+       <FormControl isRequired >
+         <FormLabel >Nome Completo</FormLabel>
+         <Input 
+          placeholder='Nome Completo'
+          _placeholder={{color: 'gray.500'}}
+          type={'text'}
+          onChange={e => setNome(e.target.value)}
+          value={nome} 
+      
+        />
    
-
-       <form onSubmit={Dados} >
-       <FormControl isRequired>
-          <FormLabel>Nome da Empresa</FormLabel>
-          <Input
-            type="text"
-            placeholder="Digite"
-            size="lg"
-            onChange={e => setNomeEmpresa(e.target.value)}
-            value={nomeEmpresa} 
-            variant="filled"
-          /> 
         </FormControl>
 
-        <Center height="30px">
-          <Divider orientation="vertical" />
-        </Center>
-
-       <FormControl isRequired>
-         <FormLabel>E-mail</FormLabel>
-         <Input
-          type="text"
-          placeholder="Digite"
-          size="lg"
+        <FormControl>
+        <FormLabel flexDirection={'column'}>E-mail</FormLabel>
+        <Input 
+          placeholder='email@email.com'
+          _placeholder={{color: 'gray.500'}}
+          type={'email'}
           onChange={e => setEmail(e.target.value)}
           value={email} 
-          variant="filled"
-          isDisabled={true}
-         /> 
+        />   
         </FormControl>
+      </Stack>
+    
+      <Stack 
+        spacing={6} 
+        mt={4} 
+        direction={['column', 'row']}>
 
-        <Center height="30px">
-          <Divider orientation="vertical" />
-        </Center>
-        <FormControl isRequired>
-         <FormLabel>Razão social</FormLabel>
-          <Input
-          type="text"
-          placeholder="Digite"
-          size="lg"
-          onChange={e => setRazaoSocial(e.target.value)}
-          value={razaoSocial} 
-          variant="filled"
-          /> 
-        </FormControl>
-        <Center height="30px">
-          <Divider orientation="vertical" />
-        </Center>
-        <FormControl isRequired>
-         <FormLabel>CPNJ</FormLabel>
-         <Input
-          type="text"
-          placeholder="Digite"
-          size="lg"
-          variant="filled"
-          onChange={e => setCnpj(e.target.value)}
-          value={cnpj} 
-         /> 
-        </FormControl>
-        <Center height="30px">
-          <Divider orientation="vertical" />
-        </Center>
-        <FormControl isRequired>
-         <FormLabel>Inscrição Estadual</FormLabel>
-         <Input
-          type="text"
-          placeholder="Digite"
-          size="lg"
-          variant="filled"
-          onChange={e => setIe(e.target.value)}
-          value={ie} 
-         /> 
-        </FormControl>
+<FormControl isRequired >
+        <FormLabel >CPF</FormLabel>
+        <Input 
+          placeholder='CPF'
+          _placeholder={{color: 'gray.500'}}
+          type={'text'}
+          onChange={e => setCpf(e.target.value)}
+          value={cpf} 
+        />   
+      </FormControl>
+
+      <FormControl isRequired >
+           <FormLabel >Telefone</FormLabel>
+        <Input 
+          placeholder='Telefone'
+          _placeholder={{color: 'gray.500'}}
+          type={'tel'}
+          onChange={e => setTelefone(e.target.value)}
+          value={telefone} 
+        />
+      </FormControl>
+
+        </Stack>
+
    
+      <Button 
+        mt={5} 
+        onClick={handleShow}
+        color={'white'}
           
-          <Button mt={4} colorScheme="teal" type="submit">
-          {loadingAuth ? 'Salvando...' : 'Salvar'}
+      >
+          Redefinir senha 
+      </Button> 
+      {mostrar &&
+       <>
+
+      <Stack 
+        spacing={6} 
+        mt={4} 
+        direction={['column', 'row']}>
+
+      <FormControl isRequired>
+        <FormLabel>Senha</FormLabel>
+        <InputGroup >
+      
+        <Input
+          placeholder='Senha'
+          _placeholder={{color: 'gray.500'}}
+          type={showSenha ? 'text' : 'password'}
+          onChange={e => setSenha(e.target.value)}
+          value={senha} 
+        />
+
+        <InputRightElement h={'full'}>
+        <Button
+          variant={'ghost'}
+          onClick={() =>
+            setShowSenha((showSenha) => !showSenha)
+          }>
+          {showSenha ? <ViewIcon /> : <ViewOffIcon />}
+        </Button>
+      </InputRightElement>
+     
+        </InputGroup>
+  
+      </FormControl>
+
+
+      <FormControl isRequired >
+        <FormLabel>Senha</FormLabel>
+      <InputGroup >
+      
+      <Input
+        placeholder='Senha'
+        _placeholder={{color: 'gray.500'}}
+        type={showSenha ? 'text' : 'password'}
+        onChange={e => setSenha(e.target.value)}
+        value={senha} 
+      />
+
+      <InputRightElement h={'full'}>
+      <Button
+        variant={'ghost'}
+        onClick={() =>
+          setShowSenha((showSenha) => !showSenha)
+        }>
+        {showSenha ? <ViewIcon /> : <ViewOffIcon />}
       </Button>
-          </form>
-          </Center>
-      </Box>
+    </InputRightElement>
    
+         </InputGroup>
+         </FormControl>
+        </Stack>
+       
+      </>            
+      } 
 
-      <Box w="100%" h="100%" >
-      <Stack pl={3}>
-        <Text as="h1"  pt={5} fontSize="30px" >
-         Contato
-        </Text>
-       </Stack>
-       <Center height="20px">
-        <Divider orientation="vertical" />
-       </Center>
-       <Center>
-       <form onSubmit={Dados} >
-       <FormControl isRequired>
-          <FormLabel>Telefone</FormLabel>
-          <Input
-            type="text"
-            placeholder="Digite"
-            size="lg"
-            onChange={e => setTelefone(e.target.value)}
-            value={telefone} 
-            variant="filled"
-          /> 
-        </FormControl>
+      <Stack 
+        spacing={6} 
+        mt={4} 
+        direction={['column', 'row']} mt={5}>
+      <Button
+            bg={'red.400'}
+            color={'white'}
+            w="full"
+            _hover={{
+              bg: 'red.500',
+            }}>
+            Cancelar
+          </Button>
+      <Button 
+        bg={'green.400'}
+        onClick={ocultarSenha}
+        color={'white'}
+        w="full"
+        _hover={{
+          bg: 'blue.500'
+        }}
+        type='submit'
+      > Salvar</Button>
+      
 
-        <Center height="30px">
-          <Divider orientation="vertical" />
-        </Center>
-
-       <FormControl isRequired>
-         <FormLabel>E-mail</FormLabel>
-         <Input
-          type="text"
-          placeholder="Digite"
-          size="lg"
-          onChange={e => setCep(e.target.value)}
-          value={cep} 
-          variant="filled"
-          isDisabled={true}
-         /> 
-        </FormControl>
-
-        <Center height="30px">
-          <Divider orientation="vertical" />
-        </Center>
-        <FormControl isRequired>
-         <FormLabel>Razão social</FormLabel>
-          <Input
-          type="text"
-          placeholder="Digite"
-          size="lg"
-          onChange={e => setEndereco(e.target.value)}
-          value={endereco} 
-          variant="filled"
-          /> 
-        </FormControl>
-        <Center height="30px">
-          <Divider orientation="vertical" />
-        </Center>
-        <FormControl isRequired>
-         <FormLabel>CPNJ</FormLabel>
-         <Input
-          type="text"
-          placeholder="Digite"
-          size="lg"
-          variant="filled"
-           
-         /> 
-        </FormControl>
-        <Center height="30px">
-          <Divider orientation="vertical" />
-        </Center>
-        <FormControl isRequired>
-         <FormLabel>Inscrição Estadual</FormLabel>
-         <Input
-          type="text"
-          placeholder="Digite"
-          size="lg"
-          variant="filled"
-          onChange={e => (e.target.value)}
-        
-         /> 
-        </FormControl>
-   
-          
-          <Button mt={4} colorScheme="teal" type="submit">
-          {loadingAuth ? 'Salvando...' : 'Salvar'}
-      </Button>
-          </form>
-          </Center>
-      </Box>
-       </SimpleGrid>
-   </Box>  
-
-   <Center>
-                <Box>
-                    <Button className="logout-btn" onClick={() => signOut()} >
-                        Sair
-                    </Button>
-                </Box>
-            </Center>
-
-  </Box>
+      </Stack>
+      </form>
+     
+    </Stack>
+    </Flex>
+    </>
 
   )
 }

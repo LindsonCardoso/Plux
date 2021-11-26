@@ -13,6 +13,8 @@ function onClick(e, item) {
 
 const items = [
   { name: "dashboard",  label: "Dashboard", path: "/dashboard", Icon: HomeIcon },
+  "divider",
+  
   {
     name: "ponto",
     label: "Ponto",
@@ -22,7 +24,8 @@ const items = [
       { name: "Controle de ponto",  path: "#", label: "Statements", onClick },
       { name: "reports", path: "#", label: "Reports", onClick }
     ]
-  },
+  }, 
+  "divider",
   {
     name: "Empresa",
     label: "Empresa",
@@ -37,10 +40,10 @@ const items = [
         path: "#",
         items: [
           { name: "Cadastro de Funcionário", label: "Cadastro de funcionário", path: "/cadastro-de-funcionario"},
-          { name: "sms", label: "SMS" }
+          { name: "Cadastro", label: "Cadastro" }
         ]
       },
-      "divider",
+    
       {
         name: "Parametrizações",
         label: "Parametrizações",
@@ -55,8 +58,16 @@ const items = [
          
         ]
       },
+      {
+        name: "Administrativo",
+        label: "Administrativo",
+        Icon: GroupAddIcon,
+        path: "/administrativo",   
+    }, 
+  
+    
     ]
-  },
+  },   "divider",
   {
     name: "Relatórios",
     label: "Relatórios",
@@ -72,13 +83,13 @@ const items = [
   { name: "Bater ponto",  label: "Bater ponto", path: "/registrar-ponto", Icon: HomeIcon },
   "divider",
   {
-    name: "settings",
-    label: "Settings",
+    name: "Configuração",
+    label: "Configuração",
     Icon: SettingsIcon,
     path: "#",
     items: [
-      { name: "Administrativo", label: "Adminstrativo", path:"/profile" },
-      "divider",
+      { name: "Profile", label: "Profile", path:"/profile" },
+    
       {
         name: "notifications",
         label: "Notifications",
