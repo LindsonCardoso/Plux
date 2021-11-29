@@ -111,7 +111,7 @@ export default function AuthProvider({children}){
         })
 }
 
-
+    //Cadatro usuario ADM
     async function signUp (nome, login, email, senha){
      setLoadingAuth(true)   
         Axios.post('http://localhost:3001/api/cadastro',{ 

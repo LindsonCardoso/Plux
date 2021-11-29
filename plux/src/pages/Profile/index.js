@@ -22,36 +22,188 @@ import {
   Center,
   InputRightElement,
   Box,
-  InputGroup
+  InputGroup,
+  useToast
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { useEffect } from 'react';
   
 
 export default function Profile(){
 
   const { user, signOut, setUser, storegeUser, cadEmpresa, loadingAuth } = useContext(AuthContext);
+  const [guardaDados, setGuardaDados] = useState([])
+  const [customer, setCustomerData] = useState({
+    nome: "",
+    login: "",
+    senha: "",
+    email: "",
+    telefone: "",
+    cpf: "",
+    confirmPassword: ""
+  });
 
-  const [nome, setNome] = useState(user && user.nome);
-  const [email, setEmail] = useState(user && user.email);
-  //const [nome, setNome] = useState(user && user.nome);
-  const [senha, setSenha] = useState(user && user.nome);
 
-  const [telefone, setTelefone] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [endereco, setEndereco] = useState('')
   const [showSenha, setShowSenha] = useState(false)
   const [mostrar, setMostrar] = useState(false);
+  //const [nome, setNome] = useState(user && user.nome);
+    // error fields to display on form
+    const [nomeError, setNomeError] = useState("");
+    const [senhaError, setSenhaError] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [telefoneError, setTelefoneError] = useState("");
+    const [cpfError, setCpfError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [loginError, setLoginError] = useState("");
+    
+    const [status, setStatus] = useState({
+      type: '',
+      mensagem: ''
+    });
+
+  const toast = useToast()
+
+//Handle all other controlled fields 
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setCustomerData(prev => ({
+       ...prev,
+        [name]: value 
+  }));
+}
+
+
+const handleEmailChange = (e) => {
+  setCustomerData(prev => ({
+      ...prev,
+      email: e.target.value
+  }))
+}
+
+
+const handleCpfChange = (e) => {
+  setCustomerData(prev => ({
+      ...prev,
+      cpf: e.target.value
+  }))
+}
 
 
 
-  const Dados = (e) => {
+  // Handle telefone 
+  const handleNumberChange = (e) => {
+    let val = e.target.value;
+    val = val.replace(/[^0-9]/gm, '');
 
-    e.preventDefault();
-    if(nome !== '' && cpf  !== ''&& email   !== '' && senha !== '' && telefone !== '') {
-      cadEmpresa(nome,cpf,email,senha,telefone);
-    }
-    console.log(nome,cpf,email,senha,telefone)
+    let num = `${val.substring(0, 3)} ${val.substring(3, 6)} ${val.substring(6, val.length)}`;
+    num = num.trim();
+    
+    setCustomerData(prev => ({
+        ...prev,
+        telefone: num
+    }))
   }
+
+
+
+  const handlePasswordChange = (e) => {
+    const {name, value} = e.target;
+    setCustomerData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }
+
+  useEffect(() => {
+    checkPassword(customer)
+  }, [customer])
+
+  const checkPassword= (customer) => {
+    if(customer.senha === customer.confirmPassword) {
+      setPasswordError("")
+    } else if(customer.senha !== customer.confirmPassword){
+      setPasswordError("Senhas Incorretas")
+    } else {
+      setPasswordError("")
+    }
+
+  }
+  
+  function validate(){
+    if(!customer.nome) return setStatus({type: 'error', mensagem: 'Erro: Necessário preencher o campo Nome completo!'});
+    if(!customer.login) return setStatus({type: 'error', mensagem: 'Erro: Necessário preencher o campo Login!'});
+    if(customer.cpf.length < 11) return setStatus({type: 'error', mensagem: 'Erro: O Campo CPF precisa ter pelo menos 11 caracteres!'});
+    if(!customer.email) return setStatus({type: 'error', mensagem: 'Erro: Necessário preencher o campo E-mail!'});
+    if(!customer.telefone) return setStatus({type: 'error', mensagem: 'Erro: Necessário preencher o campo Telefone!'});
+    
+    return true;
+}
+
+
+    // submit form data
+    const CadastroProfile = (e) => {
+      e.preventDefault();
+     
+      const formData = new FormData(e.target);
+
+          fetch("http://localhost:3001/api/updateUserAdm", {
+              method: "POST",
+              headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                  id: user.uid,
+                  login: formData.get('login'),
+                  nome: formData.get('nome'),
+                  senha: formData.get('senha'),
+                  email: formData.get('email'),
+                  cpf: formData.get('cpf'),
+                  telefone: formData.get('telefone')
+              }),
+              })
+              .then((response) => response.json())
+              .then(() => {
+                setGuardaDados(JSON.stringify(customer))
+                console.log('DADOS PROFILE ' + guardaDados)
+                if(!validate()) return; else {
+                  
+                   const dados = {
+                    uid: user.uid,
+                    nome: customer.nome,
+                    avatarUrl: null,
+                    email: customer.email,
+                    perfil: user.perfil,
+                   }
+
+                   setUser(dados)
+                   storegeUser(dados)
+                   
+                   setCustomerData({
+                     senha: '',
+                     confirmPassword: ''
+                   })
+
+                  setStatus({
+                    type: '',
+                    mensagem: ""
+                  });
+
+                  ocultarSenha()
+
+                  toast({
+                    title: "Informações alteradas.",
+                    status: "success",
+                    duration: 3600,
+                    isClosable: true,
+                    position: 'bottom',
+                  })
+                }
+              })
+              .catch((err) => console.log("ERROR: " + err));
+
+          
+   }
 
  
 
@@ -95,35 +247,42 @@ export default function Profile(){
       </Heading>
 
 
-      <form>
-
+      <form onSubmit={CadastroProfile}>
+      {status.type === 'success' ? <p style={{ color: "green",  }}>{status.mensagem}</p> : ""}
+      {status.type === 'error' ? <p style={{ color: "#ff0000" }}>{status.mensagem}</p> : ""}
+                              
       <Stack 
         spacing={6} 
         mt={4} 
         direction={['column', 'row']}>
-       <FormControl isRequired >
+       <FormControl  >
          <FormLabel >Nome Completo</FormLabel>
          <Input 
+          onFocus={() => setNomeError('')}
           placeholder='Nome Completo'
           _placeholder={{color: 'gray.500'}}
           type={'text'}
-          onChange={e => setNome(e.target.value)}
-          value={nome} 
-      
+          value={customer.nome  || user && user.nome}
+          onChange={handleChange} 
+          name="nome"
         />
    
         </FormControl>
 
-        <FormControl>
-        <FormLabel flexDirection={'column'}>E-mail</FormLabel>
-        <Input 
-          placeholder='email@email.com'
+        <FormControl  >
+         <FormLabel >Login</FormLabel>
+         <Input 
+          onFocus={(e) => setLoginError('')}
+          placeholder='Login'
           _placeholder={{color: 'gray.500'}}
-          type={'email'}
-          onChange={e => setEmail(e.target.value)}
-          value={email} 
-        />   
+          type={'text'}
+          value={customer.login || user.nome}
+          onChange={handleChange} 
+          name="login"
+        />
+   
         </FormControl>
+
       </Stack>
     
       <Stack 
@@ -131,25 +290,46 @@ export default function Profile(){
         mt={4} 
         direction={['column', 'row']}>
 
-<FormControl isRequired >
+
+<FormControl>
+        <FormLabel flexDirection={'column'}>E-mail</FormLabel>
+        <Input 
+          placeholder='email@email.com'
+          _placeholder={{color: 'gray.500'}}
+          name="email"
+          value={customer.email || user.email} 
+          onChange={handleEmailChange} 
+        />   
+        </FormControl>
+
+      <FormControl  >
         <FormLabel >CPF</FormLabel>
         <Input 
           placeholder='CPF'
           _placeholder={{color: 'gray.500'}}
           type={'text'}
-          onChange={e => setCpf(e.target.value)}
-          value={cpf} 
+          onChange={handleCpfChange}
+          value={customer.cpf}
+          name='cpf'
+          id='cpf'
+          maxLength={11}
         />   
       </FormControl>
 
-      <FormControl isRequired >
+      
+
+      <FormControl  >
            <FormLabel >Telefone</FormLabel>
         <Input 
           placeholder='Telefone'
           _placeholder={{color: 'gray.500'}}
           type={'tel'}
-          onChange={e => setTelefone(e.target.value)}
-          value={telefone} 
+          onChange={handleNumberChange}
+          value={customer.telefone || user.telefone } 
+          name='telefone'
+          id='telefone'
+          maxLength={'12'}
+          
         />
       </FormControl>
 
@@ -166,7 +346,6 @@ export default function Profile(){
       </Button> 
       {mostrar &&
        <>
-
       <Stack 
         spacing={6} 
         mt={4} 
@@ -174,14 +353,18 @@ export default function Profile(){
 
       <FormControl isRequired>
         <FormLabel>Senha</FormLabel>
+        {passwordError ? <span style={{color:'red'}}>{passwordError}</span> : ''}
+
         <InputGroup >
       
         <Input
           placeholder='Senha'
           _placeholder={{color: 'gray.500'}}
           type={showSenha ? 'text' : 'password'}
-          onChange={e => setSenha(e.target.value)}
-          value={senha} 
+          onChange={handlePasswordChange}
+          value={customer.senha} 
+          name="senha"
+          onFocus={(e) => setPasswordError('')}
         />
 
         <InputRightElement h={'full'}>
@@ -199,17 +382,21 @@ export default function Profile(){
       </FormControl>
 
 
-      <FormControl isRequired >
-        <FormLabel>Senha</FormLabel>
+      <FormControl  >
+        <FormLabel>Confirma Senha</FormLabel>
+     
       <InputGroup >
-      
+   
       <Input
-        placeholder='Senha'
+        placeholder='Confirma Senha'
         _placeholder={{color: 'gray.500'}}
         type={showSenha ? 'text' : 'password'}
-        onChange={e => setSenha(e.target.value)}
-        value={senha} 
-      />
+        onChange={handlePasswordChange}
+        value={customer.confirmPassword}
+        minLength="8"
+     
+        name="confirmPassword"
+        />
 
       <InputRightElement h={'full'}>
       <Button
@@ -243,7 +430,6 @@ export default function Profile(){
           </Button>
       <Button 
         bg={'green.400'}
-        onClick={ocultarSenha}
         color={'white'}
         w="full"
         _hover={{

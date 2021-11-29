@@ -24,6 +24,7 @@ app.post('/api/cadastro', (req, res) => {
   const senha = req.body.senha
   const email = req.body.email
   const login = req.body.login
+  const perfil = "A";
   
   db.query(
     "SELECT COUNT(*) verificar from cad_usuario where usu_login = ?", 
@@ -42,8 +43,8 @@ app.post('/api/cadastro', (req, res) => {
       if(Id === 1){
         res.send({message: "ops deu pau"});
       }else if(Id === 0){ 
-        db.query("INSERT INTO cad_usuario (usu_nome, usu_login, usu_senha, usu_email) VALUES (?,?,?,?)",
-        [nome, login, senha, email], (err, results) => {
+        db.query("INSERT INTO cad_usuario (usu_nome, usu_login, usu_senha, usu_email, usu_perfil) VALUES (?,?,?,?,?)",
+        [nome, login, senha, email, perfil], (err, results) => {
           if(err) res.send({err: err});
           if(result.length > 0){
             res.send(results)
@@ -201,6 +202,26 @@ app.put('/api/EmpUpdate', (req, res) => {
   const nomeEmpresa  = req.body.nomeEmpresa
 db.query("UPDATE cad_empresa SET cli_nome = ? WHERE cli_id = ?",
 [nomeEmpresa, id], (err, result) => {
+  if(err) res.send({err: err});
+  if(result){
+    res.send(result)
+    console.log(result)
+    }else res.send({message: "Algo deu errado"})      
+})
+})
+
+app.post('/api/updateUserAdm', (req, res) => {
+  
+  const login = req.body.login
+  const id = req.body.id
+  const nome  = req.body.nome
+  const senha = req.body.senha
+  const email = req.body.email
+  const cpf = req.body.cpf
+  const telefone = req.body.telefone
+
+db.query("UPDATE cad_usuario SET usu_nome = ?,usu_login = ?,usu_senha = ?,usu_email = ?,usu_telefone = ?, usu_cpf = ? WHERE usu_id = ?",
+[nome,login,senha,email,telefone,cpf,id], (err, result) => {
   if(err) res.send({err: err});
   if(result){
     res.send(result)
