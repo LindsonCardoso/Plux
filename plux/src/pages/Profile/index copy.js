@@ -25,7 +25,6 @@ import {
   InputGroup
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-  
 
 export default function Profile(){
 

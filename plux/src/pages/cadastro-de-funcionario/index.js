@@ -26,7 +26,7 @@ import {Container,
     ModalFooter,
     ModalBody,
     ModalCloseButton, Checkbox,DrawerFooter,
-    useDisclosure, Divider,useColorModeValue,
+    useDisclosure, Divider,useColorModeValue, color,
 } from "@chakra-ui/react"
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
 import { useToast } from "@chakra-ui/react"
@@ -486,54 +486,59 @@ const Profile = () => {
                                     <Input 
                                       mt={4}
                                       placeholder="Codigo" 
+                                      _placeholder={{color: 'white'}}
                                       value={codigo}
                                       onChange={(e) => setCodigo(e.target.value)}
                                       name="codigo"
-                                      style={{border: '1px solid green'}}
+                                      style={{border: '1px solid gray.500'}}
                                     />
 
                                     
                                     <Input 
                                       mt={4}
                                       placeholder="Nome Completo" 
+                                      _placeholder={{color: 'white'}}
                                       type="text" 
                                       value={nome}
                                       onChange={(e) => setNome(e.target.value)}
                                       name="nome"
-                                      style={{border: '1px solid green'}}
+                                      style={{border: '1px solid gray.500'}}
                                     />
                                     
                                    
                                     <Input 
                                       mt={4} 
                                       placeholder="CPF"
+                                      _placeholder={{color: 'white'}}
                                       type="text" 
                                       value={cpf}
                                       onChange={(e) => setCpf(e.target.value)}
                                       nome="cpf"
-                                      style={{border: '1px solid green'}}
+                                      style={{border: '1px solid gray.500'}}
                                     />
 
                                 
                                     <Input
                                       mt={4}
-                                      placeholder="email" 
+                                      placeholder="email"
+                                      _placeholder={{color: 'white'}} 
                                       type="email" 
                                       value={email}
                                       onChange={(e) => setEmail(e.target.value)}
                                       name="email"
-                                      style={{border: '1px solid green'}}
+                                      style={{border: '1px solid gray.500'}}
                                     />
                                 
                                    
                                     <Input 
                                      mt={4}
                                       placeholder="WhatsApp"
+                                      _placeholder={{color: 'white'}}
                                       type="text" 
                                       value={whatsapp}
                                       onChange={(e) => setWhatsapp(e.target.value)}
                                       name="celular"
-                                      style={{border: '1px solid green'}}
+                                      style={{border: '1px solid gray.500'}}
                                     />
                                    
                                    
