@@ -172,6 +172,7 @@ const Profile = () => {
           email: element.fun_email,
         })
       });
+      
       const lastFunc = dados[dados.length -1]
       setListaFuncionarios(listFuncionario => [...listFuncionario, ...lista ])
       setLastFuncionario(lastFunc)

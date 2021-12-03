@@ -78,15 +78,20 @@ app.post('/api/login', (req, res) => {
 //Cadastro dados da emprasa
 app.post('/api/empresa', (req, res) => {
   
-  const nomeEmpresa  = req.body.nomeEmpresa
+  const codigo = req.body.codigoEmp
+  const nomeFantasia  = req.body.nomeFantasia
   const razaoSocial = req.body.razaoSocial
-  const CNPJ = req.body.CNPJ
-  const IE = req.body.IE
+  const cnpj = req.body.cnpj
   const email = req.body.email
+  const telefone = req.body.telefone
+  const cidade = req.body.cidade
+  const complemento = req.body.complemento
+  const numero = req.body.numero
+
 
   db.query(
-    "SELECT COUNT(*) verificar from cad_empresa where cli_nome = ?", 
-    [nomeEmpresa],
+    "SELECT COUNT(*) verificar from cad_empresa where emp_id = ?", 
+    [codigo],
     (err, result) => {
       if(err) res.send({err: err});
       if(result){
@@ -99,10 +104,17 @@ app.post('/api/empresa', (req, res) => {
       console.log(json[0].verificar)
       const Id = json[0].verificar; 
       if(Id === 1){
-        res.send({message: "Ja cadastrado!"});
+        db.query( "UPDATE cad_empresa SET emp_nomefantasia = ?, emp_razaosocial = ?, emp_email = ?, emp_cnpj = ?, emp_telefone = ?, emp_numero = ?, emp_complemento = ?, emp_cidade = ? WHERE emp_id = ?",
+        [nomeFantasia,razaoSocial,email,cnpj, telefone, numero, complemento, cidade, codigo],  (err, results) => {
+          if(err) res.send({err: err});
+          if(result.length > 0){
+            res.send(results)
+            console.log(results)
+            }          
+        })
       }else if(Id === 0){ 
-        db.query( "INSERT INTO cad_empresa (cli_nome, cli_razaosocial, cli_email, cli_cnpj, cli_ie) VALUES (?,?,?,?,?)",
-        [nomeEmpresa,razaoSocial,email,CNPJ,IE],  (err, results) => {
+        db.query( "INSERT INTO cad_empresa (emp_nomefantasia, emp_razaosocial, emp_email, emp_cnpj, emp_telefone, emp_numero, emp_complemento, emp_cidade) VALUES (?,?,?,?,?,?,?,?)",
+        [nomeFantasia,razaoSocial,email,cnpj, telefone, numero, complemento, cidade],  (err, results) => {
           if(err) res.send({err: err});
           if(result.length > 0){
             res.send(results)
@@ -119,7 +131,7 @@ app.post('/api/DadosEmpresa', (req, res) => {
 
 const nome  = req.body.nomeEmpresa
 
-db.query("SELECT * FROM cad_empresa WHERE cli_nome = ?",
+db.query("SELECT * FROM cad_empresa WHERE emp_razaosocial = ?",
 [nome], (err, result) => {
   if(err) res.send({err: err});
   if(result.length > 0){
